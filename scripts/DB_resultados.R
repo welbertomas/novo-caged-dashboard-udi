@@ -18,7 +18,7 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
 .escrever_aba <- function(wb, nome, dados) {
   if (nome %in% openxlsx::sheets(wb)) openxlsx::removeWorksheet(wb, nome)
   openxlsx::addWorksheet(wb, nome)
-  openxlsx::writeDataTable(wb, nome, data = as.data.frame(dados),
+  openxlsx::writeDataTable(wb, nome, x = as.data.frame(dados),
                            tableStyle = "TableStyleMedium9")
 }
 
