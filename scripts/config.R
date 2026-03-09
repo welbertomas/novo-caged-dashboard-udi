@@ -6,9 +6,11 @@
 MES_ATUAL <- "202601"
 
 # ── Caminhos ─────────────────────────────────────────────
-DIR_DATA       <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/data_processed"
-DIR_SCRIPT     <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/scripts"
-ARQUIVO_TABELAS <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/output/DB_trabalho.xlsx"
+DIR_RAIZ       <- normalizePath("..", winslash = "/", mustWork = FALSE)
+DIR_DATA       <- file.path(DIR_RAIZ, "data_processed")
+DIR_SCRIPT     <- file.path(DIR_RAIZ, "scripts")
+DIR_OUTPUT     <- file.path(DIR_RAIZ, "output")
+ARQUIVO_TABELAS <- file.path(DIR_OUTPUT, "DB_trabalho.xlsx")
 
 # ── Município-alvo para microdados completos ──────────────
 MUNICIPIO_ALVO <- 317020L   # Uberlândia (MG)

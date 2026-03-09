@@ -15,6 +15,7 @@ for (p in pkgs) {
 }
 
 setwd(DIR_SCRIPT)
+if (!dir.exists(DIR_OUTPUT)) dir.create(DIR_OUTPUT, recursive = TRUE)
 
 # ── Parâmetros derivados (não editar) ─────────────────────
 ANO_ATUAL  <- substr(MES_ATUAL, 1, 4)

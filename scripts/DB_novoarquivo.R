@@ -9,8 +9,8 @@
 
 cat("\n---- DB_novoarquivo.R ----\n")
 
-ARQUIVO_COMPLETO <- "CAGED_completo.rds"
-ARQUIVO_BACKUP   <- "CAGED_completo_backup.rds"
+ARQUIVO_COMPLETO <- file.path(DIR_DATA, "CAGED_completo.rds")
+ARQUIVO_BACKUP   <- file.path(DIR_DATA, "CAGED_completo_backup.rds")
 
 # ── Carregar histórico local ───────────────────────────────
 if (!file.exists(ARQUIVO_COMPLETO)) {
