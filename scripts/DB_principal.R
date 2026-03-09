@@ -6,7 +6,10 @@
 rm(list = ls())
 
 # ── Configuração e pacotes ────────────────────────────────
-source("config.R")
+this_file <- tryCatch(normalizePath(sys.frame(1)$ofile, winslash = "/", mustWork = FALSE),
+                      error = function(e) NA_character_)
+SCRIPT_DIR <- if (!is.na(this_file)) dirname(this_file) else normalizePath(getwd(), winslash = "/", mustWork = FALSE)
+source(file.path(SCRIPT_DIR, "config.R"))
 
 pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven")
 for (p in pkgs) {
@@ -27,8 +30,8 @@ if (!dir.exists(DIR_TEMP)) dir.create(DIR_TEMP, recursive = TRUE)
 BASE_URL_FTP <- "ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED"
 
 # ── Utilitários e variáveis ───────────────────────────────
-source("DB_ftp_utils.R")
-source("DB_variaveis.R")
+source(file.path(DIR_SCRIPT, "DB_ftp_utils.R"))
+source(file.path(DIR_SCRIPT, "DB_variaveis.R"))
 
 # ── Banner ────────────────────────────────────────────────
 cat("==============================================\n")
@@ -55,10 +58,10 @@ cat(sprintf(
 ))
 
 # ── Pipeline ──────────────────────────────────────────────
-source("DB_novoarquivo.R")          # atualiza CAGED_completo.rds
-source("DB_atualizaestoque.R")      # atualiza CAGED_painel.rds + estoqueatualizado.rds
-source("DB_resultados.R")           # Tabelas 1–10  (Uberlândia, série histórica)
-source("DB_resultados_ultimomes.R") # Tabelas 11–14 (todos os municípios, mês atual)
+source(file.path(DIR_SCRIPT, "DB_novoarquivo.R"))          # atualiza CAGED_completo.rds
+source(file.path(DIR_SCRIPT, "DB_atualizaestoque.R"))      # atualiza CAGED_painel.rds + estoqueatualizado.rds
+source(file.path(DIR_SCRIPT, "DB_resultados.R"))           # Tabelas 1–10  (Uberlândia, série histórica)
+source(file.path(DIR_SCRIPT, "DB_resultados_ultimomes.R")) # Tabelas 11–14 (todos os municípios, mês atual)
 
 # ── Limpeza ───────────────────────────────────────────────
 unlink(DIR_TEMP, recursive = TRUE)
