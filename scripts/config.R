@@ -6,8 +6,9 @@
 MES_ATUAL <- "202601"
 
 # ── Caminhos ─────────────────────────────────────────────
-DIR_RAIZ        <- "C:/Users/User/OneDrive - ufu.br/CEPES/DB Mercado de Trabalho"
-ARQUIVO_TABELAS <- "DB_trabalho.xlsx"
+DIR_DATA       <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/data_processed"
+DIR_SCRIPT     <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/scripts"
+ARQUIVO_TABELAS <- "C:/Users/User/Projetos/novo-caged-dashboard-udi/output/DB_trabalho.xlsx"
 
 # ── Município-alvo para microdados completos ──────────────
 MUNICIPIO_ALVO <- 317020L   # Uberlândia (MG)

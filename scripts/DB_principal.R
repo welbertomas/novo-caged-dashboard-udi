@@ -14,7 +14,7 @@ for (p in pkgs) {
   library(p, character.only = TRUE)
 }
 
-setwd(DIR_RAIZ)
+setwd(DIR_SCRIPT)
 
 # ── Parâmetros derivados (não editar) ─────────────────────
 ANO_ATUAL  <- substr(MES_ATUAL, 1, 4)
