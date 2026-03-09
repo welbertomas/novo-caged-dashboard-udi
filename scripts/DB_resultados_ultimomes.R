@@ -19,7 +19,7 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
 .escrever_aba <- function(wb, nome, dados) {
   if (nome %in% openxlsx::sheets(wb)) openxlsx::removeWorksheet(wb, nome)
   openxlsx::addWorksheet(wb, nome)
-  openxlsx::writeDataTable(wb, nome, data=as.data.frame(dados),
+  openxlsx::writeDataTable(wb, nome, x=as.data.frame(dados),
                            tableStyle="TableStyleMedium9")
 }
 
@@ -44,8 +44,8 @@ if (n_sem > 0) message(sprintf("ATENÇÃO: %d obs. sem deflator IPC.", n_sem))
 dt_mov <- criar_variaveis(dt_mov, modo="ultimomes")
 
 # ── Dados auxiliares ──────────────────────────────────────
-nomes_mun  <- readRDS("nomes_mun.rds")
-estoque_dt <- readRDS("estoqueatualizado.rds")
+nomes_mun  <- readRDS(file.path(DIR_DATA, "nomes_mun.rds"))
+estoque_dt <- readRDS(file.path(DIR_DATA, "estoqueatualizado.rds"))
 
 educ_ordem  <- c("Analfabeto","Fundamental Incompleto","Fundamental Completo",
                  "Médio Completo","Superior Completo","Pós-Graduação","Não Identificado")

@@ -18,12 +18,12 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
 .escrever_aba <- function(wb, nome, dados) {
   if (nome %in% openxlsx::sheets(wb)) openxlsx::removeWorksheet(wb, nome)
   openxlsx::addWorksheet(wb, nome)
-  openxlsx::writeDataTable(wb, nome, data = as.data.frame(dados),
+  openxlsx::writeDataTable(wb, nome, x = as.data.frame(dados),
                            tableStyle = "TableStyleMedium9")
 }
 
 # ── IPC-CEPES ─────────────────────────────────────────────
-arq_ipc <- Sys.glob("cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx")
+arq_ipc <- Sys.glob(file.path(DIR_DATA, "cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx"))
 if (length(arq_ipc) == 0) stop("Arquivo IPC-CEPES não encontrado.")
 arq_ipc <- arq_ipc[length(arq_ipc)]
 
@@ -41,7 +41,7 @@ cat(sprintf("  IPC: %d períodos (último: %d)\n", nrow(ipc), max(ipc$competênc
 assign("ipc", ipc, envir = .GlobalEnv)
 
 # ── Série histórica de Uberlândia ─────────────────────────
-dt <- readRDS("CAGED_completo.rds")
+dt <- readRDS(file.path(DIR_DATA, "CAGED_completo.rds"))
 
 # Normalizar nomes que podem chegar sem acento do Stata
 renomear <- c("salário"="salario", "seção"="secao",
@@ -68,7 +68,7 @@ dt <- criar_variaveis(dt, modo = "historico")
 dt <- dt[competênciamov >= 202301]
 cat(sprintf("  Série Uberlândia: %d obs.\n", nrow(dt)))
 
-estoque_dt <- readRDS("estoqueatualizado.rds")
+estoque_dt <- readRDS(file.path(DIR_DATA, "estoqueatualizado.rds"))
 
 # ── Helpers de reshape ────────────────────────────────────
 cols_setor <- c("Agropecuária","Indústria","Construção","Comércio","Serviços")
