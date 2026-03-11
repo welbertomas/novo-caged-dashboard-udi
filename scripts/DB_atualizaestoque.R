@@ -13,7 +13,7 @@ cat("\n---- DB_atualizaestoque.R ----\n")
 
 ARQUIVO_PAINEL  <- file.path(DIR_DATA, "CAGED_painel.rds")
 ARQUIVO_BACKUP  <- file.path(DIR_DATA, "CAGED_painel_backup.rds")
-ARQUIVO_ESTOQUE <- file.path(DIR_DATA, "estoque.rds")
+ARQUIVO_ESTOQUE <- file.path(DIR_RAW, "estoque.rds")
 ARQUIVO_SAIDA   <- file.path(DIR_DATA, "estoqueatualizado.rds")
 
 COLS_PAINEL <- c("município", "competênciamov", "saldomovimentação")

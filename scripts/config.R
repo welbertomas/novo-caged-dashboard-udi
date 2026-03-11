@@ -6,10 +6,11 @@
 MES_ATUAL <- "202601"
 
 # ── Caminhos ─────────────────────────────────────────────
-DIR_RAIZ       <- normalizePath("..", winslash = "/", mustWork = FALSE)
-DIR_DATA       <- file.path(DIR_RAIZ, "data_processed")
-DIR_SCRIPT     <- file.path(DIR_RAIZ, "scripts")
-DIR_OUTPUT     <- file.path(DIR_RAIZ, "output")
+DIR_RAIZ        <- normalizePath("..", winslash = "/", mustWork = FALSE)
+DIR_RAW         <- file.path(DIR_RAIZ, "data_raw")
+DIR_DATA        <- file.path(DIR_RAIZ, "data_processed")
+DIR_SCRIPT      <- file.path(DIR_RAIZ, "scripts")
+DIR_OUTPUT      <- file.path(DIR_RAIZ, "output")
 ARQUIVO_TABELAS <- file.path(DIR_OUTPUT, "DB_trabalho.xlsx")
 
 # ── Município-alvo para microdados completos ──────────────

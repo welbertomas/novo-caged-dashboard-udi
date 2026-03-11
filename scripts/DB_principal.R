@@ -67,3 +67,4 @@ cat("\n==============================================\n")
 cat("Processamento concluído com sucesso!\n")
 cat(sprintf("Planilha gerada: %s\n", ARQUIVO_TABELAS))
 cat("==============================================\n")
+

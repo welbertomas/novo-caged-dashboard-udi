@@ -2,7 +2,6 @@
 # DB_novoarquivo.R
 # Filtra Uberlândia nos dados do cache_ftp e anexa ao
 # histórico CAGED_completo.rds.
-#
 # Lê de:    cache_ftp (definido em DB_principal.R)
 # Atualiza: CAGED_completo.rds
 # ============================================================
@@ -14,7 +13,7 @@ ARQUIVO_BACKUP   <- file.path(DIR_DATA, "CAGED_completo_backup.rds")
 
 # ── Carregar histórico local ───────────────────────────────
 if (!file.exists(ARQUIVO_COMPLETO)) {
-  stop("CAGED_completo.rds não encontrado. Execute DB_migracao.R primeiro.")
+  stop("CAGED_completo.rds não encontrado.")
 }
 caged_hist <- readRDS(ARQUIVO_COMPLETO)
 cat(sprintf("  Histórico carregado: %d obs.\n", nrow(caged_hist)))

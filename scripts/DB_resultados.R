@@ -23,7 +23,7 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
 }
 
 # ── IPC-CEPES ─────────────────────────────────────────────
-arq_ipc <- Sys.glob(file.path(DIR_DATA, "cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx"))
+arq_ipc <- Sys.glob(file.path(DIR_RAW, "cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx"))
 if (length(arq_ipc) == 0) stop("Arquivo IPC-CEPES não encontrado.")
 arq_ipc <- arq_ipc[length(arq_ipc)]
 
