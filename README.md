@@ -1,14 +1,34 @@
 # novo-caged-dashboard-udi
-Processa dados do Novo CAGED e exporta informações para abastecer dashboard do emprego de Uberlândia (MG).
 
-# Fonte dos dados
-Ministério do Trabalho e do Emprego
-Programa de Disseminação das Estatísticas do Trabalho (PDET)
-ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED
+Pipeline em R para baixar, atualizar e consolidar dados do Novo CAGED e gerar a planilha `output/DB_trabalho.xlsx`, usada no dashboard do emprego de Uberlândia (MG).
 
-# Download dos dados
-Em /data_raw estão: IPC-CEPES; estoque de trabalhos em janeiro de 2023; e lista dos nomes e códigos (6 dígitos) dos municípios brasileiros.
-Para obter os arqquivos "crus" basta executar "DB_extracao" e "DB_saldoextracao"
+## O que os scripts permitem fazer
 
-# Replicação
-DB_principal produz o output DB_trabalho.xlsx que contém todas as tabelas que abastecem os dashboard do emprego de Uberlândia-MG.
+- **Extração inicial de microdados de Uberlândia** (`scripts/DB_extracao.R`): baixa os arquivos mensais no FTP do MTE, filtra o município alvo e salva a base histórica em `data_processed/CAGED_completo.rds`.
+- **Extração inicial de saldo para todos os municípios** (`scripts/DB_extraisaldo.R`): baixa os arquivos mensais, agrega saldo por município e competência e salva em `data_processed/CAGED_painel_saldo.rds`.
+- **Atualização mensal completa** (`scripts/DB_principal.R`):
+  - baixa apenas o mês de referência definido em `scripts/config.R`;
+  - atualiza os arquivos históricos processados;
+  - recalcula estoque e variação mensal;
+  - exporta/atualiza todas as abas da planilha `output/DB_trabalho.xlsx`.
+
+## Fonte dos dados
+
+- Ministério do Trabalho e Emprego (MTE)
+- Programa de Disseminação das Estatísticas do Trabalho (PDET)
+- FTP: `ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED`
+
+Arquivos auxiliares esperados em `data_raw/`:
+- IPC-CEPES (xlsx);
+- estoque base (jan/2023) em `estoque.rds`;
+- nomes e códigos dos municípios em `nomes_mun.rds`.
+
+## Replicação do output `DB_trabalho.xlsx`
+
+Para reproduzir a planilha final:
+
+1. Ajuste `MES_ATUAL` em `scripts/config.R` (formato `AAAAMM`).
+2. Execute `scripts/DB_principal.R` a partir da pasta `scripts`.
+3. O arquivo final será gerado em `output/DB_trabalho.xlsx`.
+
+> Observação: para primeira carga histórica, execute antes `scripts/DB_extracao.R` e `scripts/DB_extraisaldo.R`.

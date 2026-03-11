@@ -22,6 +22,16 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
                            tableStyle = "TableStyleMedium9")
 }
 
+
+.limpar_num <- function(dados) {
+  for (col in names(dados)) {
+    if (is.numeric(dados[[col]])) {
+      dados[[col]][!is.finite(dados[[col]])] <- NA_real_
+    }
+  }
+  dados
+}
+
 # ── IPC-CEPES ─────────────────────────────────────────────
 arq_ipc <- Sys.glob(file.path(DIR_RAW, "cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx"))
 if (length(arq_ipc) == 0) stop("Arquivo IPC-CEPES não encontrado.")
@@ -85,7 +95,7 @@ t1 <- dt[, .(Admissões=sum(admissoes,na.rm=T), Demissões=sum(demissoes,na.rm=T
              Saldo=sum(saldomovimentação,na.rm=T)),
          by=.(Competência=competênciamov, `Mês/Ano`=data)]
 data.table::setorder(t1, Competência)
-.escrever_aba(wb, "Tabela 1", t1)
+.escrever_aba(wb, "Tabela 1", .limpar_num(t1))
 cat("  ✓ Tabela 1\n")
 
 # Tabela 2: Saldo por Setor
@@ -97,7 +107,7 @@ t2 <- data.table::dcast(
 )
 data.table::setcolorder(t2, c("Competência","Mês/Ano", intersect(cols_setor, names(t2))))
 data.table::setorder(t2, Competência)
-.escrever_aba(wb, "Tabela 2", t2)
+.escrever_aba(wb, "Tabela 2", .limpar_num(t2))
 cat("  ✓ Tabela 2\n")
 
 # Tabela 3: Saldo por Porte
@@ -109,7 +119,7 @@ t3 <- data.table::dcast(t3_long, Competência + `Mês/Ano` ~ porte_leg,
                          value.var="Saldo", fill=0L)
 data.table::setcolorder(t3, c("Competência","Mês/Ano", intersect(cols_porte, names(t3))))
 data.table::setorder(t3, Competência)
-.escrever_aba(wb, "Tabela 3", t3)
+.escrever_aba(wb, "Tabela 3", .limpar_num(t3))
 cat("  ✓ Tabela 3\n")
 
 # Tabela 4: Remuneração Média
@@ -117,7 +127,7 @@ t4 <- dt[, .(`Salário Admissão (R$)`=mean(remuneracao_udi_adm,na.rm=T),
              `Salário Demissão (R$)`=mean(remuneracao_udi_dem,na.rm=T)),
          by=.(Competência=competênciamov, `Mês/Ano`=data)]
 data.table::setorder(t4, Competência)
-.escrever_aba(wb, "Tabela 4", t4)
+.escrever_aba(wb, "Tabela 4", .limpar_num(t4))
 cat("  ✓ Tabela 4\n")
 
 # Tabela 5: Remuneração de Admissão por Setor
@@ -129,7 +139,7 @@ t5 <- data.table::dcast(
 )
 data.table::setcolorder(t5, c("Competência","Mês/Ano", intersect(cols_setor, names(t5))))
 data.table::setorder(t5, Competência)
-.escrever_aba(wb, "Tabela 5", t5)
+.escrever_aba(wb, "Tabela 5", .limpar_num(t5))
 cat("  ✓ Tabela 5\n")
 
 # Tabela 6: Remuneração de Admissão por Porte
@@ -140,7 +150,7 @@ t6_long[, porte_leg := porte_map[as.character(indiceporte)]]
 t6 <- data.table::dcast(t6_long, Competência + `Mês/Ano` ~ porte_leg, value.var="Rem")
 data.table::setcolorder(t6, c("Competência","Mês/Ano", intersect(cols_porte, names(t6))))
 data.table::setorder(t6, Competência)
-.escrever_aba(wb, "Tabela 6", t6)
+.escrever_aba(wb, "Tabela 6", .limpar_num(t6))
 cat("  ✓ Tabela 6\n")
 
 # Tabela 7: Remuneração de Admissão por Escolaridade
@@ -152,7 +162,7 @@ t7_long[, gdi_leg := factor(gdi_leg, levels=educ_ordem)]
 t7 <- data.table::dcast(t7_long, Competência + `Mês/Ano` ~ gdi_leg, value.var="Rem")
 data.table::setcolorder(t7, c("Competência","Mês/Ano", intersect(educ_ordem, names(t7))))
 data.table::setorder(t7, Competência)
-.escrever_aba(wb, "Tabela 7", t7)
+.escrever_aba(wb, "Tabela 7", .limpar_num(t7))
 cat("  ✓ Tabela 7\n")
 
 # Tabela 9: Desligamentos a Pedido
@@ -162,7 +172,7 @@ if (!is.na(col_tipo)) {
     .(`Desligamentos a Pedido` = sum(saldomovimentação,na.rm=T) * -1L),
     by=.(Competência=competênciamov, `Mês/Ano`=data)]
   data.table::setorder(t9, Competência)
-  .escrever_aba(wb, "Tabela 9", t9)
+  .escrever_aba(wb, "Tabela 9", .limpar_num(t9))
   cat("  ✓ Tabela 9\n")
 } else {
   message("  ! Tabela 9 ignorada — coluna tipomovimentação não encontrada.")
@@ -179,7 +189,7 @@ t10 <- merge(
 setnames(t10, c("estoque_atualizado","var_mes"),
               c("Estoque","Variação Mensal (%)"))
 data.table::setorder(t10, município, Competência)
-.escrever_aba(wb, "Tabela 10", t10)
+.escrever_aba(wb, "Tabela 10", .limpar_num(t10))
 cat("  ✓ Tabela 10\n")
 
 openxlsx::saveWorkbook(wb, ARQUIVO_TABELAS, overwrite=TRUE)
