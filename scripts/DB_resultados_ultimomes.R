@@ -23,6 +23,16 @@ wb <- if (file.exists(ARQUIVO_TABELAS)) {
                            tableStyle="TableStyleMedium9")
 }
 
+
+.limpar_num <- function(dados) {
+  for (col in names(dados)) {
+    if (is.numeric(dados[[col]])) {
+      dados[[col]][!is.finite(dados[[col]])] <- NA_real_
+    }
+  }
+  dados
+}
+
 # ── CAGEDMOV do mês — direto do cache em memória ─────────
 dt_mov <- data.table::copy(cache_ftp$CAGEDMOV)
 
@@ -77,7 +87,7 @@ t11 <- merge(t11,
 data.table::setcolorder(t11, c("município","Nome Município","Competência","Mês/Ano",
                                 "Admissões","Demissões","Saldo","Estoque","Variação (%)"))
 data.table::setorder(t11, município)
-.escrever_aba(wb, "Tabela 11", t11)
+.escrever_aba(wb, "Tabela 11", .limpar_num(t11))
 cat("  ✓ Tabela 11\n")
 
 # Tabela 12: Remuneração Média por Município
@@ -87,7 +97,7 @@ t12 <- .add_nome(t12)
 data.table::setcolorder(t12, c("município","Nome Município","Competência",
                                 "Mês/Ano","Salário Admissão (R$)"))
 data.table::setorder(t12, município)
-.escrever_aba(wb, "Tabela 12", t12)
+.escrever_aba(wb, "Tabela 12", .limpar_num(t12))
 cat("  ✓ Tabela 12\n")
 
 # Tabela 13: Remuneração por Escolaridade e Município
@@ -99,7 +109,7 @@ t13 <- .add_nome(t13)
 data.table::setcolorder(t13, c("município","Nome Município","Competência",
                                 intersect(educ_ordem, names(t13))))
 data.table::setorder(t13, município)
-.escrever_aba(wb, "Tabela 13", t13)
+.escrever_aba(wb, "Tabela 13", .limpar_num(t13))
 cat("  ✓ Tabela 13\n")
 
 # Tabela 14: Remuneração por Setor e Município
@@ -111,7 +121,7 @@ t14 <- .add_nome(t14)
 data.table::setcolorder(t14, c("município","Nome Município","Competência",
                                 intersect(setor_ordem, names(t14))))
 data.table::setorder(t14, município)
-.escrever_aba(wb, "Tabela 14", t14)
+.escrever_aba(wb, "Tabela 14", .limpar_num(t14))
 cat("  ✓ Tabela 14\n")
 
 openxlsx::saveWorkbook(wb, ARQUIVO_TABELAS, overwrite=TRUE)

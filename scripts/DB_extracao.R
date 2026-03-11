@@ -4,7 +4,7 @@
 # Deve ser executado apenas uma vez
 # ============================================================
 
-source("../config.R")
+source("config.R")
 
 library(data.table)
 library(curl)
@@ -18,6 +18,7 @@ MESES <- sprintf("%02d", 1:12)
 TIPOS <- c("CAGEDEXC", "CAGEDFOR", "CAGEDMOV")
 
 dir.create(DIR_RAW, showWarnings = FALSE, recursive = TRUE)
+dir.create(DIR_DATA, showWarnings = FALSE, recursive = TRUE)
 
 temp_dir <- tempfile()
 dir.create(temp_dir)
