@@ -36,13 +36,6 @@ cat(sprintf("Mês de referência : %s\n", MES_ATUAL))
 cat(sprintf("Ano               : %s\n", ANO_ATUAL))
 cat(sprintf("Diretório         : %s\n", getwd()))
 cat("==============================================\n\n")
-
-# ============================================================
-# DOWNLOAD ÚNICO DO MÊS ATUAL
-# Os três arquivos são baixados uma vez e ficam em cache_ftp.
-# Todos os scripts subsequentes leem dessa lista — sem novo
-# acesso à rede ou ao disco.
-# ============================================================
 cat("── Baixando arquivos do mês", MES_ATUAL, "──\n")
 
 cache_ftp <- baixar_mes_ftp(MES_ATUAL)
