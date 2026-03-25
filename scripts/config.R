@@ -26,3 +26,8 @@ SM <- c(
   "2023" = 1320, "2024" = 1412, "2025" = 1518,
   "2026" = 1621
 )
+
+# ── Boletim (Rmd/PDF) ─────────────────────────────────────
+DIR_BOLETIM         <- file.path(DIR_RAIZ, "boletim")
+ARQUIVO_BOLETIM_RMD <- file.path(DIR_SCRIPT, "boletim.Rmd")
+ARQUIVO_BOLETIM_PDF <- file.path(DIR_OUTPUT, "boletim_mensal.pdf")
