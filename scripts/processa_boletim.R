@@ -32,6 +32,11 @@ ano_referencia <- as.integer(substr(MES_ATUAL, 1, 4))
 ano_anterior <- ano_referencia - 1L
 sm_ano_anterior <- as.numeric(SM[as.character(ano_anterior)])
 sm_ano_referencia <- as.numeric(SM[as.character(ano_referencia)])
+meses_pt <- c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")
+mes_referencia_num <- as.integer(substr(MES_ATUAL, 5, 6))
+mes_referencia_nome <- meses_pt[mes_referencia_num]
+mes_referencia_nome_min <- tolower(mes_referencia_nome)
+rotulo_acumulado <- paste0("Acum. ", ano_referencia)
 
 # Merge com IPC e filtro de período
 caged_completo <- readRDS(file.path(DIR_DATA, "CAGED_completo.rds"))
@@ -291,6 +296,9 @@ df_geral_saldo <- df_processed %>%
   ) %>%
   arrange(competênciamov)
 
+periodo_inicio_label <- as.character(dplyr::first(df_geral_saldo$data))
+periodo_fim_label <- as.character(dplyr::last(df_geral_saldo$data))
+
 
 # ----- Dados para Tabela 2 (Saldo por Setor) -----
 df_saldo_setor <- df_processed %>%
@@ -330,7 +338,7 @@ df_saldo_porte_acumulado <- df_processed %>%
   # Adicionar colunas de placeholder para compatibilidade com o dataframe mensal
 mutate(
   competênciamov = NA_real_, # NA_real_ para garantir tipo numérico
-  data = "Acum. 2025" # Rótulo para a linha de acumulado
+  data = rotulo_acumulado # Rótulo para a linha de acumulado
 )
 
 
@@ -677,9 +685,9 @@ bar_colors_saldo <- c("TRUE" = "steelblue", "FALSE" = "darkred")
 # ---------------------------------------------------------------------------- #
 
 # Fonte padrão para os gráficos
-fonte_grafico <- "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026."
+fonte_grafico <- paste0("Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até ", mes_referencia_nome_min, " de ", ano_referencia, ".")
 
-# Gráfico 1 – Saldo do emprego formal, com ajustes*, de fevereiro/2025 a janeiro/20265
+# Gráfico 1 – Saldo do emprego formal, com ajustes* (intervalo móvel)
 grafico1 <- ggplot(df_geral_saldo, aes(x = data, y = saldo_mes, fill = saldo_mes > 0)) +
   geom_bar(stat = "identity", width = 0.7) +
   scale_fill_manual(values = bar_colors_saldo, guide = FALSE) +
@@ -687,7 +695,7 @@ grafico1 <- ggplot(df_geral_saldo, aes(x = data, y = saldo_mes, fill = saldo_mes
             vjust = ifelse(df_geral_saldo$saldo_mes > 0, -0.5, 1.2), # Ajusta posição do label
             size = 3.5, color = "black") +
   labs(
-    title = "Gráfico 1 – Uberlândia/MG: Saldo do emprego formal, com ajustes*,\nde fevereiro/2025  a janeiro/2026",
+    title = paste0("Gráfico 1 – Uberlândia/MG: Saldo do emprego formal, com ajustes*,\nde ", periodo_inicio_label, " a ", periodo_fim_label),
     x = NULL,
     y = "Saldo",
     caption = fonte_grafico
@@ -705,7 +713,7 @@ grafico1 <- ggplot(df_geral_saldo, aes(x = data, y = saldo_mes, fill = saldo_mes
     panel.grid.major.x = element_blank() # Remove linhas de grade verticais
   )
 
-# Gráfico 2 – Saldo por setor de atividade e porte da empresa em janeiro de 2026
+# Gráfico 2 – Saldo por setor de atividade e porte da empresa no mês de referência
 # Reordena fatores para o gráfico, garantindo que 'setores' e 'tamanho' sigam a ordem desejada.
 df_grafico2_data$setores <- factor(df_grafico2_data$setores, levels = c("Agropecuária", "Indústria", "Construção", "Comércio", "Serviços"))
 df_grafico2_data$tamanho <- factor(df_grafico2_data$tamanho, levels = c("MEI e Micro", "Pequena", "Média", "Grande"))
@@ -717,7 +725,7 @@ grafico2 <- ggplot(df_grafico2_data, aes(x = forcats::fct_rev(tamanho), y = sald
             hjust = ifelse(df_grafico2_data$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
   facet_wrap(~ setores, scales = "free_y", ncol = 1, strip.position = "left") + # Facets à esquerda
   labs(
-    title = "Gráfico 2 – Uberlândia/MG: Saldo por setor de atividade e porte da empresa\nem janeiro de 2026",
+    title = paste0("Gráfico 2 – Uberlândia/MG: Saldo por setor de atividade e porte da empresa\nem ", mes_referencia_nome_min, " de ", ano_referencia),
     x = NULL,
     y = "Saldo",
     caption = fonte_grafico
@@ -739,7 +747,7 @@ grafico2 <- ggplot(df_grafico2_data, aes(x = forcats::fct_rev(tamanho), y = sald
     panel.grid.major.y = element_blank()
   )
 
-# Gráfico 3 – Saldo por faixa etária do empregado, com ajustes*, em janeiro de 2026
+# Gráfico 3 – Saldo por faixa etária do empregado, com ajustes*, no mês de referência
 # Reordena fatores para o gráfico, garantindo que 'faixa_etaria' siga a ordem desejada.
 df_grafico3_data$faixa_etaria <- factor(df_grafico3_data$faixa_etaria, levels = c("17 ou menos", "18-24", "25-29", "30-39", "40-49", "50-59", "60 ou mais"))
 
@@ -749,7 +757,7 @@ grafico3 <- ggplot(df_grafico3_data, aes(x = forcats::fct_rev(faixa_etaria), y =
   geom_text(aes(label = scales::comma(saldomovimentação, big.mark = ".", decimal.mark = ",")),
             hjust = ifelse(df_grafico3_data$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
   labs(
-    title = "Gráfico 3 – Uberlândia/MG: Saldo por faixa etária do empregado, com ajustes*,\n em janeiro de 2026",
+    title = paste0("Gráfico 3 – Uberlândia/MG: Saldo por faixa etária do empregado, com ajustes*,\n em ", mes_referencia_nome_min, " de ", ano_referencia),
     x = NULL,
     y = "Saldo",
     caption = fonte_grafico
@@ -767,7 +775,7 @@ grafico3 <- ggplot(df_grafico3_data, aes(x = forcats::fct_rev(faixa_etaria), y =
     panel.grid.major.y = element_blank() # Remove as linhas de grade verticais (no sistema de coordenadas invertido)
   )
 
-# Gráfico 4 – Saldo por gênero e grau de instrução do empregado, com ajustes*, em janeiro de 2026
+# Gráfico 4 – Saldo por gênero e grau de instrução do empregado, com ajustes*, no mês de referência
 # Reordena fatores para o gráfico
 df_grafico4_data$genero <- factor(df_grafico4_data$genero,
                                   levels = c("Homem", "Mulher"))
@@ -793,7 +801,7 @@ grafico4 <- ggplot(df_grafico4_data,
             size = 3.5) +
     facet_wrap(~ genero, scales = "free_y") +
     labs(
-    title   = "Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado,\ncom ajustes*, em janeiro de 2026",
+    title   = paste0("Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado,\ncom ajustes*, em ", mes_referencia_nome_min, " de ", ano_referencia),
     x       = NULL,
     y       = "Saldo",
     caption = fonte_grafico
@@ -825,13 +833,13 @@ grafico4 <- ggplot(df_grafico4_data,
     plot.margin = margin(t = 0.3, r = 1, b = 0.5, l = 0.5, unit = "cm")
   )
 
-# Gráfico 5 – Salário médio real de admissão em Uberlândia, com ajustes*, de fevereiro/2025 a janeiro/2026
+# Gráfico 5 – Salário médio real de admissão em Uberlândia, com ajustes* (intervalo móvel)
 grafico5 <- ggplot(df_grafico5_data, aes(x = data, y = remuneracao_udi_adm)) +
   geom_col(fill = "steelblue", width = 0.7) +
   geom_text(aes(label = scales::comma(remuneracao_udi_adm, big.mark = ".", decimal.mark = ",", accuracy = 1)),
             vjust = -0.5, size = 3, color = "black") +
   labs(
-    title = "Gráfico 5 – Uberlândia/MG: Salário médio real de admissão em Uberlândia, com ajustes*,\n de fevereiro/2025 a janeiro/2026 (em R$)",
+    title = paste0("Gráfico 5 – Uberlândia/MG: Salário médio real de admissão em Uberlândia, com ajustes*,\n de ", periodo_inicio_label, " a ", periodo_fim_label, " (em R$)"),
     x = NULL,
     y = "Salário de admissão",
     caption = fonte_grafico
@@ -846,7 +854,7 @@ grafico5 <- ggplot(df_grafico5_data, aes(x = data, y = remuneracao_udi_adm)) +
     panel.grid.major.x = element_blank()
   )
 
-# Gráfico 6 – Salário médio real de admissão em Uberlândia por grupamento de atividade econômica e por porte da empresa, com ajustes*, janeiro de 2026
+# Gráfico 6 – Salário médio real de admissão por atividade econômica e porte, no mês de referência
 # Reordena fatores para o gráfico
 grafico6 <- ggplot(df_grafico6_data, aes(x = forcats::fct_rev(tamanho), y = remuneracao_udi_adm)) +
   geom_col(fill = "steelblue") +
@@ -860,7 +868,7 @@ grafico6 <- ggplot(df_grafico6_data, aes(x = forcats::fct_rev(tamanho), y = remu
              strip.position = "left",
              labeller     = label_wrap_gen(width = 12)) +
     labs(
-    title   = "Gráfico 6 – Uberlândia/MG: Salário médio real de admissão por grupamento\nde atividade econômica e porte da empresa,com ajustes*, janeiro de 2026 (em R$)",
+    title   = paste0("Gráfico 6 – Uberlândia/MG: Salário médio real de admissão por grupamento\nde atividade econômica e porte da empresa, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, " (em R$)"),
     x       = NULL,
     y       = "Salário de Admissão",
     caption = fonte_grafico
@@ -896,7 +904,7 @@ grafico6 <- ggplot(df_grafico6_data, aes(x = forcats::fct_rev(tamanho), y = remu
     plot.margin = margin(t = 0.2, r = 1, b = 0.5, l = 0.5, unit = "cm")
   )
 
-# Gráfico 7 – Salário médio real de admissão por faixa etária, com ajustes*, janeiro de 2026
+# Gráfico 7 – Salário médio real de admissão por faixa etária, no mês de referência
 grafico7 <- ggplot(df_grafico7_data,
                    aes(x = forcats::fct_rev(faixa_etaria), y = remuneracao_udi_adm)) +
   geom_col(fill = "steelblue") +
@@ -906,7 +914,7 @@ grafico7 <- ggplot(df_grafico7_data,
                                       accuracy    = 1)),
             hjust = -0.2, size = 3.5) +
   labs(
-    title = "Gráfico 7 – Uberlândia/MG: Salário médio real de admissão\npor faixa etária, com ajustes*, janeiro de 2026 (em R$)",
+    title = paste0("Gráfico 7 – Uberlândia/MG: Salário médio real de admissão\npor faixa etária, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, " (em R$)"),
     x       = "Faixa Etária",
     y       = NULL,
         caption = fonte_grafico
@@ -938,7 +946,7 @@ grafico7 <- ggplot(df_grafico7_data,
     plot.margin = margin(t = 0.2, r = 1.0, b = 0.5, l = 0.5, unit = "cm")
   )
 
-# Gráfico 8 – Salário médio real de admissão por gênero e grau de instrução, com ajustes*, janeiro de 2026
+# Gráfico 8 – Salário médio real de admissão por gênero e grau de instrução, no mês de referência
 
 # Reordena fatores para o gráfico
 grafico8 <- ggplot(df_grafico8_data,
@@ -951,7 +959,7 @@ grafico8 <- ggplot(df_grafico8_data,
             hjust = -0.2, size = 3.5) +
   facet_wrap(~ genero, scales = "free_y") +
   labs(
-    title = "Gráfico 8 – Uberlândia/MG: Salário médio real de admissão\npor gênero e grau de instrução do empregado,\ncom ajustes*, janeiro de 2026 (em R$)",
+    title = paste0("Gráfico 8 – Uberlândia/MG: Salário médio real de admissão\npor gênero e grau de instrução do empregado,\ncom ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, " (em R$)"),
     x       = NULL,
     y       = NULL,
     caption = fonte_grafico
@@ -990,13 +998,13 @@ grafico8 <- ggplot(df_grafico8_data,
 # ---------------------------------------------------------------------------- #
 
 # Fonte padrão para as tabelas
-fonte_tabela <- "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026."
+fonte_tabela <- paste0("Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até ", mes_referencia_nome_min, " de ", ano_referencia, ".")
 
 # Tabela 1
 tabela1 <- df_geral_saldo %>%
   select(`Mês/Ano` = data, Admissões = admissoes, Desligamentos = demissoes, Saldo = saldomovimentação) %>%
   mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ","))) %>%
-  add_row(`Mês/Ano` = "Saldo acumulado no ano 2025",
+  add_row(`Mês/Ano` = paste0("Saldo acumulado no ano ", ano_referencia),
           Admissões = scales::comma(sum(df_geral_saldo$admissoes, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Desligamentos = scales::comma(sum(df_geral_saldo$demissoes, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Saldo = scales::comma(sum(df_geral_saldo$saldomovimentação, na.rm = TRUE), big.mark = ".", decimal.mark = ","))
@@ -1009,7 +1017,7 @@ tabela2 <- df_saldo_setor %>%
   ) %>%
   mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ","))) %>%
   # Adicionar linha de Acumulado 2025
-  add_row(`Mês / Ano` = "Acum. 2025",
+  add_row(`Mês / Ano` = rotulo_acumulado,
           Agropecuária = scales::comma(sum(df_saldo_setor$Agropecuária, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Indústria = scales::comma(sum(df_saldo_setor$Indústria, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Construção = scales::comma(sum(df_saldo_setor$Construção, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
@@ -1092,7 +1100,7 @@ total_mes_dezembro_4 <- df_tabela4_base %>%
     Desligamentos = -grand_total_desligamentos_dez_abs,
     Saldo = sum(saldomovimentação, na.rm = TRUE)
   ) %>%
-  mutate(Variáveis = "Total mês de dezembro") %>%
+  mutate(Variáveis = paste0("Total mês de ", mes_referencia_nome_min)) %>%
   # Garante a ordem e nomes das colunas
   select(Variáveis, Admissões, Desligamentos, Saldo)
 
@@ -1140,7 +1148,7 @@ tabela5 <- df_tabela5_data %>%
     `Variação mensal_dem` = sprintf("%.2f%%", `Variação mensal_dem`)
   ) %>%
   add_row(
-    `Ano / Mês` = "Acum. 2025 (%)",
+    `Ano / Mês` = paste0("Acum. ", ano_referencia, " (%)"),
     `Salário de Admissão` = "",
     `Variação mensal_adm` = sprintf("%.2f%%", acum_adm_var),
     `Salário de Demissão` = "",
@@ -1155,7 +1163,7 @@ tabela6 <- df_remuneracao_setor %>%
   ) %>%
   mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ",", accuracy=1))) %>%
   # Adicionar linha de Acumulado 2025
-  add_row(`Mês / Ano` = "Acum. 2025 (%)",
+  add_row(`Mês / Ano` = paste0("Acum. ", ano_referencia, " (%)"),
           Agropecuária = sprintf("%.2f%%", df_tabela6_acum %>% pull(`Agropecuária`)),
           Indústria = sprintf("%.2f%%", df_tabela6_acum %>% pull(`Indústria`)),
           Construção = sprintf("%.2f%%", df_tabela6_acum %>% pull(`Construção`)),
@@ -1170,7 +1178,7 @@ tabela7 <- df_remuneracao_porte %>%
   ) %>%
   mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ",", accuracy=1))) %>%
   # Adicionar linha de Acumulado 2025
-  add_row(`Mês / Ano` = "Acum. 2025 (%)",
+  add_row(`Mês / Ano` = paste0("Acum. ", ano_referencia, " (%)"),
           `MEI e Micro` = sprintf("%.2f%%", df_tabela7_acum %>% pull(`meimicro`)),
           Pequena = sprintf("%.2f%%", df_tabela7_acum %>% pull(`pequena`)),
           Média = sprintf("%.2f%%", df_tabela7_acum %>% pull(`media`)),
