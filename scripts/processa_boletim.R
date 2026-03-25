@@ -25,32 +25,12 @@ library(scales) # Para formatação de números
 library(kableExtra) # Para tabelas avançadas
 library(forcats) # Para manipulação de fatores em gráficos
 
-# Parâmetros do ciclo
-periodo_referencia_num <- as.integer(MES_ATUAL)
-periodo_12meses <- DOZEMESES
-ano_referencia <- as.integer(substr(MES_ATUAL, 1, 4))
-ano_anterior <- ano_referencia - 1L
-sm_ano_anterior <- as.numeric(SM[as.character(ano_anterior)])
-sm_ano_referencia <- as.numeric(SM[as.character(ano_referencia)])
-
 # Merge com IPC e filtro de período
-caged_completo <- readRDS(file.path(DIR_DATA, "CAGED_completo.rds"))
+dt_caged <- readRDS(file.path(DIR_DATA, "CAGED_completo.rds"))
 
-if (!exists("ipc", inherits = TRUE)) {
-  arq_ipc <- Sys.glob(file.path(DIR_RAW, "cepes_op_ipc_cepes_serie_historica_agregada_n_indice_1994_*.xlsx"))
-  if (length(arq_ipc) == 0) stop("Arquivo IPC-CEPES não encontrado para o boletim.")
-  arq_ipc <- arq_ipc[length(arq_ipc)]
-
-  ipc <- readxl::read_excel(arq_ipc, sheet = "numeroindice", col_types = "numeric") %>%
-    filter(!is.na(anomes)) %>%
-    arrange(anomes) %>%
-    mutate(deflator = numeroindice[anomes == max(anomes)] / numeroindice) %>%
-    transmute(competênciamov = anomes, deflator)
-}
-
-df_caged_merged <- caged_completo %>%
+df_caged_merged <- df_caged %>%
   inner_join(ipc, by = "competênciamov") %>%
-  filter(competênciamov >= periodo_12meses)
+  filter(competênciamov >= DOZEMESES)
 
 # ---------------------------------------------------------------------------- #
 #                             Criar Variáveis Derivadas                        #
@@ -259,13 +239,13 @@ df_processed <- df_caged_merged %>%
   ) %>%
   mutate(
     remuneracao_udi_adm = case_when(
-      salário > sm_ano_anterior * 0.3 & salário < sm_ano_anterior * 150 & saldomovimentação == 1 & indtrabintermitente != 1 & ano == ano_anterior ~ salariodef,
-      salário > sm_ano_referencia * 0.3 & salário < sm_ano_referencia * 150 & saldomovimentação == 1 & indtrabintermitente != 1 & ano == ano_referencia ~ salariodef,
+      salário > sm_2025 * 0.3 & salário < sm_2025 * 150 & saldomovimentação == 1 & indtrabintermitente != 1 & ano == 2025 ~ salariodef,
+      salário > sm_2026 * 0.3 & salário < sm_2026 * 150 & saldomovimentação == 1 & indtrabintermitente != 1 & ano == 2026 ~ salariodef,
       TRUE ~ NA_real_
     ),
     remuneracao_udi_dem = case_when(
-      salário > sm_ano_anterior * 0.3 & salário < sm_ano_anterior * 150 & saldomovimentação == -1 & indtrabintermitente != 1 & ano == ano_anterior ~ salariodef,
-      salário > sm_ano_referencia * 0.3 & salário < sm_ano_referencia * 150 & saldomovimentação == -1 & indtrabintermitente != 1 & ano == ano_referencia ~ salariodef,
+      salário > sm_2025 * 0.3 & salário < sm_2025 * 150 & saldomovimentação == -1 & indtrabintermitente != 1 & ano == 2025 ~ salariodef,
+      salário > sm_2026 * 0.3 & salário < sm_2026 * 150 & saldomovimentação == -1 & indtrabintermitente != 1 & ano == 2026 ~ salariodef,
       TRUE ~ NA_real_
     )
   ) %>%
@@ -1106,23 +1086,6 @@ tabela4 <- tabela4_final_numerica %>%
     across(c(Admissões, Desligamentos, Saldo),
            ~ifelse(is.na(.), "", scales::comma(., big.mark = ".", decimal.mark = ",")))
   )
-
-tabela4a <- df_tabela4_setores %>%
-  mutate(across(c(Admissões, Desligamentos, Saldo), ~scales::comma(., big.mark = ".", decimal.mark = ",")))
-
-tabela4b <- df_tabela4_porte %>%
-  mutate(across(c(Admissões, Desligamentos, Saldo), ~scales::comma(., big.mark = ".", decimal.mark = ",")))
-
-tabela4c <- df_tabela4_faixa_etaria %>%
-  mutate(across(c(Admissões, Desligamentos, Saldo), ~scales::comma(., big.mark = ".", decimal.mark = ",")))
-
-tabela4d <- bind_rows(
-  data.frame(Variáveis = "Gênero", Admissões = NA_real_, Desligamentos = NA_real_, Saldo = NA_real_),
-  df_tabela4_genero,
-  data.frame(Variáveis = "Grau de instrução", Admissões = NA_real_, Desligamentos = NA_real_, Saldo = NA_real_),
-  df_tabela4_escolaridade
-) %>%
-  mutate(across(c(Admissões, Desligamentos, Saldo), ~ifelse(is.na(.), "", scales::comma(., big.mark = ".", decimal.mark = ","))))
 
 # Tabela 5
 tabela5 <- df_tabela5_data %>%
