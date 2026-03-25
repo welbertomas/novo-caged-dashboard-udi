@@ -1,6 +1,6 @@
 ---
 title: "Boletim Mensal do Mercado de Trabalho"
-subtitle: "`r { m <- c('Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'); if (exists('MES_ATUAL')) paste0('Uberlândia/MG - ', m[as.integer(substr(MES_ATUAL,5,6))], ' ', substr(MES_ATUAL,1,4)) else paste0('Uberlândia/MG - ', format(Sys.Date(), '%m/%Y')) }`"
+subtitle: "Uberlândia/MG - Janeiro 2026"
 date: "`r format(Sys.Date(), '%d/%m/%Y')`"
 output:
   pdf_document:
@@ -34,16 +34,6 @@ if (!exists("MES_ATUAL")) source("config.R")
 
 # Executar o script principal
 source("processa_boletim.R")
-
-meses_pt <- c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")
-ano_referencia <- as.integer(substr(MES_ATUAL, 1, 4))
-mes_referencia_nome <- meses_pt[as.integer(substr(MES_ATUAL, 5, 6))]
-mes_referencia_nome_min <- tolower(mes_referencia_nome)
-periodo_inicio_label <- as.character(dplyr::first(df_geral_saldo$data))
-periodo_fim_label <- as.character(dplyr::last(df_geral_saldo$data))
-rotulo_acumulado <- paste0("Acum. ", ano_referencia)
-rotulo_saldo_acumulado <- paste0("Saldo acumulado no ano ", ano_referencia)
-fonte_ajuste <- paste0("Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até ", mes_referencia_nome_min, " de ", ano_referencia, ".")
 
 # Função para formatar números
 format_number <- function(x) {
@@ -82,20 +72,20 @@ tabela1_data <- df_geral_saldo %>%
   ) %>%
   select(Período = data, Admissões, Desligamentos, Saldo) %>%
   # Adicionar linha de Saldo acumulado no ano 2025
-  add_row(Período = rotulo_saldo_acumulado,
+  add_row(Período = "Saldo acumulado no ano 2025",
           Admissões = scales::comma(sum(df_geral_saldo$admissoes, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Desligamentos = scales::comma(sum(abs(df_geral_saldo$demissoes), na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Saldo = scales::comma(sum(df_geral_saldo$saldomovimentação, na.rm = TRUE), big.mark = ".", decimal.mark = ","))
 
 # Renderizar a tabela
 kable(tabela1_data,
-      caption = paste0("\\textbf{Uberlândia/MG: Movimentação do emprego formal, com ajustes*, de ", periodo_inicio_label, " a ", periodo_fim_label, "}"),
+      caption = "\\textbf{Uberlândia/MG: Movimentação do emprego formal, com ajustes*, de fevereiro/2025 a janeiro/2026}",
       align = c('c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "13cm") %>%
   row_spec(nrow(tabela1_data), bold = TRUE) %>%
   footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -116,7 +106,7 @@ tabela2_data <- df_saldo_setor %>%
   ) %>%
   mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ","))) %>%
   # Adicionar linha de Acumulado 2025
-  add_row(`Mês / Ano` = rotulo_acumulado,
+  add_row(`Mês / Ano` = "Acum. 2025",
           Agropecuária = scales::comma(sum(df_saldo_setor$Agropecuária, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Indústria = scales::comma(sum(df_saldo_setor$Indústria, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
           Construção = scales::comma(sum(df_saldo_setor$Construção, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
@@ -125,13 +115,13 @@ tabela2_data <- df_saldo_setor %>%
 
 # Renderizar a tabela
 kable(tabela2_data,
-      caption = paste0("Uberlândia/MG: Saldo do emprego formal, com ajustes*, por setor de atividade econômica, de ", periodo_inicio_label, " a ", periodo_fim_label),
+      caption = "Uberlândia/MG: Saldo do emprego formal, com ajustes*, por setor de atividade econômica, de fevereiro/2025 a janeiro/2026",
       align = c('c', rep('c', 5))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "10cm") %>%    
   row_spec(nrow(tabela2_data), bold = TRUE) %>%
     footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -147,13 +137,13 @@ tabela3_data <- df_saldo_porte %>%
 
 # Renderizar a tabela
 kable(tabela3_data,
-      caption = paste0("Uberlândia/MG: Saldo do emprego formal segundo porte da empresa, com ajustes*, de ", periodo_inicio_label, " a ", periodo_fim_label),
+      caption = "Uberlândia/MG: Saldo do emprego formal segundo porte da empresa, com ajustes*, de fevereiro/2025 a janeiro/2026",
       align = c('c', rep('c', ncol(tabela3_data) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
   row_spec(nrow(tabela3_data), bold = TRUE) %>%
     footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -185,45 +175,45 @@ print(grafico4)
 ## Tabela 4.a — Grupamento de atividade econômica
 ```{r tabela4a, echo=FALSE}
 kable(tabela4a,
-      caption = paste0("Tabela 4.a — Uberlândia/MG: movimentação e saldo do emprego formal por grupamento de atividade econômica, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, "."),
+      caption = "Tabela 4.a — Uberlândia/MG: movimentação e saldo do emprego formal por grupamento de atividade econômica, com ajustes*, janeiro de 2026.",
       align = c('c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "12cm") %>%
-  footnote(general = fonte_ajuste,
+  footnote(general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
            general_title = "", threeparttable = TRUE)
 ```
 
 ## Tabela 4.b — Porte da empresa
 ```{r tabela4b, echo=FALSE}
 kable(tabela4b,
-      caption = paste0("Tabela 4.b — Uberlândia/MG: movimentação e saldo do emprego formal por porte da empresa, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, "."),
+      caption = "Tabela 4.b — Uberlândia/MG: movimentação e saldo do emprego formal por porte da empresa, com ajustes*, janeiro de 2026.",
       align = c('c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "12cm") %>%
-  footnote(general = fonte_ajuste,
+  footnote(general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
            general_title = "", threeparttable = TRUE)
 ```
 
 ## Tabela 4.c — Faixa etária
 ```{r tabela4c, echo=FALSE}
 kable(tabela4c,
-      caption = paste0("Tabela 4.c — Uberlândia/MG: movimentação e saldo do emprego formal por faixa etária, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, "."),
+      caption = "Tabela 4.c — Uberlândia/MG: movimentação e saldo do emprego formal por faixa etária, com ajustes*, janeiro de 2026.",
       align = c('c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "12cm") %>%
-  footnote(general = fonte_ajuste,
+  footnote(general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
            general_title = "", threeparttable = TRUE)
 ```
 
 ## Tabela 4.d — Gênero e grau de instrução
 ```{r tabela4d, echo=FALSE}
 kable(tabela4d,
-      caption = paste0("Tabela 4.d — Uberlândia/MG: movimentação e saldo do emprego formal por gênero e grau de instrução, com ajustes*, ", mes_referencia_nome_min, " de ", ano_referencia, "."),
+      caption = "Tabela 4.d — Uberlândia/MG: movimentação e saldo do emprego formal por gênero e grau de instrução, com ajustes*, janeiro de 2026.",
       align = c('c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "12cm") %>%
   row_spec(which(tabela4d$Variáveis %in% c("Gênero", "Grau de instrução")), bold = TRUE) %>%
-  footnote(general = fonte_ajuste,
+  footnote(general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
            general_title = "", threeparttable = TRUE)
 ```
 \pagebreak
@@ -236,13 +226,13 @@ print(grafico5)
 ```{r tabela5, echo=FALSE}
 # O objeto tabela5 já foi gerado no script processa_boletim.R
 kable(tabela5,
-      caption = paste0("Uberlândia/MG: Salário médio real de admissão e demissão, com ajustes*, de ", periodo_inicio_label, " a ", periodo_fim_label, " (em R\\$)"),
+      caption = "Uberlândia/MG: Salário médio real de admissão e demissão, com ajustes*, fevereiro/2025 a janeiro/2026(em R\\$)",
       align = c('c', 'c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "5cm") %>%    # ✅ expande a coluna de texto
   row_spec(nrow(tabela5), bold = TRUE) %>%
     footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -253,13 +243,13 @@ kable(tabela5,
 ```{r tabela6, echo=FALSE}
 # O objeto tabela6 já foi gerado no script processa_boletim.R
 kable(tabela6,
-      caption = paste0("Uberlândia/MG: Salário médio real de admissão por grupamento de atividade econômica, com ajustes*, de ", periodo_inicio_label, " a ", periodo_fim_label, " (em R\\$)"),
+      caption = "Uberlândia/MG: Salário médio real de admissão por grupamento de atividade econômica, com ajustes*, de fevereiro/2025 a janeiro/2026 (em R\\$)",
       align = c('c', rep('c', ncol(tabela6) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
   row_spec(nrow(tabela6), bold = TRUE) %>%
     footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -271,13 +261,13 @@ kable(tabela6,
 ```{r tabela7, echo=FALSE}
 # O objeto tabela7 já foi gerado no script processa_boletim.R
 kable(tabela7,
-      caption = paste0("Uberlândia/MG: Salário médio real de admissão por porte da empresa, com ajustes*,\nde ", periodo_inicio_label, " a ", periodo_fim_label, " (em R\\$)"),
+      caption = "Uberlândia/MG: Salário médio real de admissão por porte da empresa, com ajustes*,\nde fevereiro/2025 a janeiro/2026 (em R\\$)",
       align = c('c', rep('c', ncol(tabela7) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "13cm") %>%    # ✅ expande a coluna de texto
   row_spec(nrow(tabela7), bold = TRUE) %>%
     footnote(
-      general = fonte_ajuste,
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
       threeparttable = TRUE
     )
@@ -342,7 +332,7 @@ kable(df_metodologia_porte,
 ```
 \vspace{1cm}
 
-Os resultados referem-se aos dados disponíveis na data de geração deste boletim (`r format(Sys.Date(), "%d/%m/%Y")`), relativos ao mês de `r mes_referencia_nome_min`, com ajustes declarados até `r mes_referencia_nome_min` de `r ano_referencia`. Assim sendo, conta com informações entregues fora do prazo ou corrigidas referentes aos meses anteriores a este.
+Os resultados referem-se aos dados divulgados pelo MTE no dia 03/03/2026, relativos ao mês de janeiro, com ajustes declarados até janeiro de 2026. Assim sendo, conta com informações entregues fora do prazo ou corrigidas referentes aos meses anteriores a este.
 
 \pagebreak
 
