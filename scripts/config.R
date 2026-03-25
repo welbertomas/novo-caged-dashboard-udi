@@ -4,6 +4,9 @@
 
 # ── Competência a processar (formato AAAAMM) ──────────────
 MES_ATUAL <- "202601"
+data_ref <- as.Date(paste0(MES_ATUAL, "01"), "%Y%m%d")
+DOZEMESES <- as.numeric(format(seq(data_ref, by = "-12 months", length.out = 2)[2], "%Y%m"))
+
 
 # ── Caminhos ─────────────────────────────────────────────
 DIR_RAIZ        <- normalizePath("..", winslash = "/", mustWork = FALSE)
@@ -12,6 +15,7 @@ DIR_DATA        <- file.path(DIR_RAIZ, "data_processed")
 DIR_SCRIPT      <- file.path(DIR_RAIZ, "scripts")
 DIR_OUTPUT      <- file.path(DIR_RAIZ, "output")
 ARQUIVO_TABELAS <- file.path(DIR_OUTPUT, "DB_trabalho.xlsx")
+TABELAS_BOLETIM <- file.path(DIR_OUTPUT, "Boletim.xlsx")
 
 # ── Município-alvo para microdados completos ──────────────
 MUNICIPIO_ALVO <- 317020L   # Uberlândia (MG)

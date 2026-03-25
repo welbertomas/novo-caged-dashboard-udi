@@ -25,104 +25,12 @@ library(scales) # Para formatação de números
 library(kableExtra) # Para tabelas avançadas
 library(forcats) # Para manipulação de fatores em gráficos
 
-# ---------------------------------------------------------------------------- #
-#                             Definir Parâmetros Globais                       #
-# ---------------------------------------------------------------------------- #
-# Estes parâmetros replicam as definições de 'global' no Stata.
-global_periodo_referencia <- "202601" # Mês de referência no formato AAAAMM
-global_arquivo_tabelas <- "Boletim Mensal Jan.2026.xlsx" # Nome do arquivo de saída (aqui usado para referência de nome)
-
-sm_2025 <- 1518 # Salário mínimo 2025
-sm_2026 <- 1621 # Salário mínimo 2026
-
-# Calcular 'periodo_12meses' (lógica do Stata)
-periodo_referencia_num <- as.numeric(global_periodo_referencia)
-if (periodo_referencia_num %% 100 == 12) { # Se o mês for dezembro (resto da divisão por 100 é 12)
-  periodo_12meses <- periodo_referencia_num - 100 # Ano anterior, mesmo mês (ex: 202512 -> 202412)
-} else { # Se for janeiro a novembro
-  periodo_12meses <- periodo_referencia_num - 99 # Mês do ano anterior (ex: 202501 -> 202402, 202502 -> 202403)
-}
-
-# Definir o diretório de trabalho onde os arquivos estão localizados.
-setwd("C:/Users/55349/Desktop/Boletim 2026") 
-
-# Configuração robusta de encoding no início do script
-Sys.setenv(LANG = "pt_BR.UTF-8")
-options(encoding = "UTF-8")
-options(scipen = 999)  # Evitar notação científica
-
-# Configuração de locale mais robusta
-if (Sys.info()['sysname'] == "Windows") {
-  locale_options <- c("Portuguese_Brazil.UTF-8", "pt_BR.UTF-8", "Portuguese_Brazil.1252")
-} else {
-  locale_options <- c("pt_BR.UTF-8", "pt-BR.UTF-8", "pt_BR")
-}
-
-for (locale in locale_options) {
-  if (try(Sys.setlocale("LC_ALL", locale), silent = TRUE) != "C") {
-    break
-  }
-}
-# ---------------------------------------------------------------------------- #
-#                      Extrair e Carregar Dados                                #
-# ---------------------------------------------------------------------------- #
-
-# Função para carregar e pré-processar arquivos CAGED do mês de referência (.txt)
-# Todas as variáveis serão numéricas, exceto 'seção' que será caractere,
-# e vírgulas serão interpretadas como separadores decimais.
-load_caged_txt <- function(file_path, type) {
-  df <- read_delim(file_path, 
-                   delim = ";", 
-                   locale = locale(decimal_mark = ",", encoding = "UTF-8"), # !! NOVIDADE: Interpreta vírgulas como decimais !!
-                   col_types = cols( # !! NOVIDADE: Define tipos de colunas explicitamente !!
-                     .default = col_double(), # A maioria será numérica por padrão
-                     seção = col_character()  # 'seção' será caractere
-                     # Se houver outras colunas que DEVEM ser caractere, adicione-as aqui.
-                     # Ex: município = col_character(), se o ID do município não for sempre numérico puro.
-                     # Mas, segundo sua instrução, a maioria deve ser numérica.
-                   )) %>%
-    filter(município == 317020) # Filtrar para Uberlândia/MG (município como numérico)
-  
-  # Ajuste específico para CAGEDEXC (excluídos)
-  if (type == "EXC") {
-    df <- df %>%
-      mutate(saldomovimentação = saldomovimentação * (-1))
-  }
-  return(df)
-}
-
-# Carregar dados do mês de referência (assumindo que os TXT estão no mesmo diretório)
-df_mov_current <- load_caged_txt(paste0("CAGEDMOV", global_periodo_referencia, ".txt"), "MOV")
-df_for_current <- load_caged_txt(paste0("CAGEDFOR", global_periodo_referencia, ".txt"), "FOR")
-df_exc_current <- load_caged_txt(paste0("CAGEDEXC", global_periodo_referencia, ".txt"), "EXC")
-
-# Carregar o arquivo CAGEDUberlandia.dta (base histórica)
-df_caged_hist <- read_dta("CAGEDUberlandia.dta") %>%
-  # Converter explicitamente apenas 'seção' para caractere, para garantir que bata
-  # com o tipo que 'load_caged_txt' define para ela.
-  # As outras colunas do .dta (que são numéricas no Stata) já devem ser importadas
-  # corretamente como numéricas pelo 'read_dta'.
-  mutate(seção = as.character(seção))
-
-# Remover dados do período de referência de df_caged_hist para evitar duplicatas, 
-# caso o .dta já contenha o mês atual por alguma execução anterior do Stata.
-df_caged_hist <- df_caged_hist %>%
-  filter(competênciamov != periodo_referencia_num)
-
-# Combinar todos os data frames - AGORA COM TIPOS CONSISTENTES E LIMPOS!
-df_caged <- bind_rows(df_caged_hist, df_mov_current, df_for_current, df_exc_current)
-
-# Importar IPC CEPES (assumindo que ipc.xlsx está no mesmo diretório)
-df_ipc <- read_excel("ipc.xlsx", sheet = "Série Histórica INPC", 
-                     col_types = c("numeric", "numeric", "numeric")) 
-
-# Garantir que 'competênciamov' no IPC também é numérico
-df_ipc <- df_ipc %>% mutate(competênciamov = as.numeric(competênciamov))
-
 # Merge com IPC e filtro de período
+dt_caged <- readRDS(file.path(DIR_DATA, "CAGED_completo.rds"))
+
 df_caged_merged <- df_caged %>%
-  inner_join(df_ipc, by = "competênciamov") %>%
-  filter(competênciamov >= periodo_12meses)
+  inner_join(ipc, by = "competênciamov") %>%
+  filter(competênciamov >= DOZEMESES)
 
 # ---------------------------------------------------------------------------- #
 #                             Criar Variáveis Derivadas                        #

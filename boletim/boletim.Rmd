@@ -115,7 +115,7 @@ kable(tabela2_data,
       caption = "Uberlândia/MG: Saldo do emprego formal, com ajustes*, por setor de atividade econômica, de fevereiro/2025 a janeiro/2026",
       align = c('c', rep('c', 5))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
-  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  column_spec(1, width = "10cm") %>%    
   row_spec(nrow(tabela2_data), bold = TRUE) %>%
     footnote(
       general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
