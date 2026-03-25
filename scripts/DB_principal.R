@@ -8,7 +8,7 @@ rm(list = ls())
 # ── Configuração e pacotes ────────────────────────────────
 source("config.R")
 
-pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven", "rmarkdown")
+pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven")
 for (p in pkgs) {
   if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
   library(p, character.only = TRUE)
@@ -52,14 +52,6 @@ source("DB_novoarquivo.R")          # atualiza CAGED_completo.rds
 source("DB_atualizaestoque.R")      # atualiza CAGED_painel.rds + estoqueatualizado.rds
 source("DB_resultados.R")           # Tabelas 1–10  (Uberlândia, série histórica)
 source("DB_resultados_ultimomes.R") # Tabelas 11–14 (todos os municípios, mês atual)
-source("processa_boletim.R")        # prepara objetos do boletim
-
-rmarkdown::render(
-  input = ARQUIVO_BOLETIM_RMD,
-  output_file = basename(ARQUIVO_BOLETIM_PDF),
-  output_dir = DIR_OUTPUT,
-  envir = .GlobalEnv
-)
 
 # ── Limpeza ───────────────────────────────────────────────
 unlink(DIR_TEMP, recursive = TRUE)
