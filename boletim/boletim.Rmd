@@ -1,0 +1,309 @@
+---
+title: "Boletim Mensal do Mercado de Trabalho"
+subtitle: "Uberlândia/MG - Janeiro 2026"
+date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: false             # Alterado: Não gerar sumário
+    # toc_depth: 2         # Removido, pois o sumário foi desabilitado
+    number_sections: true
+    fig_width: 8
+    fig_height: 6
+    includes:
+      in_header: header.tex # Adicionado: Incluir um arquivo LaTeX personalizado
+    keep_tex: true          # Adicionado: Útil para depurar problemas de LaTeX
+geometry: [margin=2cm, landscape] # Mantido 'landscape' conforme solicitado
+fontsize: 12pt                  # Aumentado a fonte base do documento
+lang: pt-BR
+---
+
+`r if (knitr::is_html_output()) "" else "\\maketitle{}"`
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = 'center',
+  fig.pos = 'H'
+)
+
+# Executar o script principal
+source("processa_boletim.R")
+
+# Função para formatar números
+format_number <- function(x) {
+  format(x, big.mark = ".", decimal.mark = ",", scientific = FALSE)
+}
+
+# Função para formatar moeda
+format_currency <- function(x) {
+  paste("R/$", format(round(x, 2), big.mark = ".", decimal.mark = ",", nsmall = 2))
+}
+
+# Calcular dados do último mês
+ultimo_mes <- df_geral_saldo %>%
+  filter(competênciamov == periodo_referencia_num)
+
+saldo_atual <- ultimo_mes$saldomovimentação
+admissoes_atual <- ultimo_mes$admissoes
+demissoes_atual <- abs(ultimo_mes$demissoes)
+```
+
+# Saldo das Movimentações Empregatícias
+
+```{r grafico1, echo=FALSE}
+#gráfico 1 já gerado no script processa_boletim
+print(grafico1)
+```
+
+\pagebreak
+```{r tabela1, echo=FALSE}
+# Criar tabela1 exatamente como no script original
+tabela1_data <- df_geral_saldo %>%
+  mutate(
+    Admissões = scales::comma(admissoes, big.mark = ".", decimal.mark = ","),
+    Desligamentos = scales::comma(abs(demissoes), big.mark = ".", decimal.mark = ","),
+    Saldo = scales::comma(saldomovimentação, big.mark = ".", decimal.mark = ",")
+  ) %>%
+  select(Período = data, Admissões, Desligamentos, Saldo) %>%
+  # Adicionar linha de Saldo acumulado no ano 2025
+  add_row(Período = "Saldo acumulado no ano 2025",
+          Admissões = scales::comma(sum(df_geral_saldo$admissoes, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Desligamentos = scales::comma(sum(abs(df_geral_saldo$demissoes), na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Saldo = scales::comma(sum(df_geral_saldo$saldomovimentação, na.rm = TRUE), big.mark = ".", decimal.mark = ","))
+
+# Renderizar a tabela
+kable(tabela1_data,
+      caption = "\\textbf{Uberlândia/MG: Movimentação do emprego formal, com ajustes*, de fevereiro/2025 a janeiro/2026}",
+      align = c('c', 'c', 'c', 'c')) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "13cm") %>%
+  row_spec(nrow(tabela1_data), bold = TRUE) %>%
+  footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+# Saldo por grupamento de atividade econômica
+```{r tabela2}
+# Criar tabela2 exatamente como no script original
+tabela2_data <- df_saldo_setor %>%
+  select(
+    `Mês / Ano` = data,
+    Agropecuária = `Agropecuária`, 
+    Indústria = `Indústria`, 
+    Construção = `Construção`, 
+    Comércio = `Comércio`, 
+    Serviços = `Serviços`
+  ) %>%
+  mutate(across(where(is.numeric), ~scales::comma(., big.mark = ".", decimal.mark = ","))) %>%
+  # Adicionar linha de Acumulado 2025
+  add_row(`Mês / Ano` = "Acum. 2025",
+          Agropecuária = scales::comma(sum(df_saldo_setor$Agropecuária, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Indústria = scales::comma(sum(df_saldo_setor$Indústria, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Construção = scales::comma(sum(df_saldo_setor$Construção, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Comércio = scales::comma(sum(df_saldo_setor$Comércio, na.rm = TRUE), big.mark = ".", decimal.mark = ","),
+          Serviços = scales::comma(sum(df_saldo_setor$Serviços, na.rm = TRUE), big.mark = ".", decimal.mark = ","))
+
+# Renderizar a tabela
+kable(tabela2_data,
+      caption = "Uberlândia/MG: Saldo do emprego formal, com ajustes*, por setor de atividade econômica, de fevereiro/2025 a janeiro/2026",
+      align = c('c', rep('c', 5))) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  row_spec(nrow(tabela2_data), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+# Saldo por porte da empresa
+```{r tabela3, echo=FALSE}
+# Criar tabela3 a partir do df_saldo_porte já gerado pelo script principal
+tabela3_data <- df_saldo_porte %>%
+  mutate(across(c(`MEI e Micro`, Pequena, Média, Grande, `Administração Pública`),
+                ~scales::comma(., big.mark = ".", decimal.mark = ",")))
+
+# Renderizar a tabela
+kable(tabela3_data,
+      caption = "Uberlândia/MG: Saldo do emprego formal segundo porte da empresa, com ajustes*, de fevereiro/2025 a janeiro/2026",
+      align = c('c', rep('c', ncol(tabela3_data) - 1))) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  row_spec(nrow(tabela3_data), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+
+\pagebreak
+```{r grafico2, echo=FALSE}
+#Gráfico 2 já foi gerado no script
+print(grafico2)
+```
+
+\pagebreak
+
+# Saldo por faixa etária
+```{r grafico3, echo=FALSE}
+#Gráfico 3 já foi gerado no script
+print(grafico3)
+```
+\pagebreak
+
+# Saldo por gênero e grau de instrução
+\vspace{-0.5cm}
+```{r grafico4, echo=FALSE}
+#Gráfico 4 já foi gerado no script
+print(grafico4)
+```
+\pagebreak
+
+```{r tabela4, echo=FALSE}
+# O objeto tabela4 já foi gerado no script processa_boletim.R
+# Nota: A tabela4 já inclui linhas de cabeçalho e de total.
+kable(tabela4,
+      caption = "Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), com ajustes*, janeiro de 2026.",
+      align = c('c', 'c', 'c', 'c')) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%  # ✅ scale_down removido
+  column_spec(1, width = "14cm") %>%   # ✅ expande a coluna de texto (Variáveis)
+  row_spec(which(tabela4$Variáveis == "Total mês de janeiro"), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+# Remuneração
+```{r grafico5, echo=FALSE}
+#Gráfico 5 já foi gerado no script
+print(grafico5)
+```
+\pagebreak
+
+```{r tabela5, echo=FALSE}
+# O objeto tabela5 já foi gerado no script processa_boletim.R
+kable(tabela5,
+      caption = "Uberlândia/MG: Salário médio real de admissão e demissão, com ajustes*, fevereiro/2025 a janeiro/2026(em R\\$)",
+      align = c('c', 'c', 'c', 'c', 'c')) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "5cm") %>%    # ✅ expande a coluna de texto
+  row_spec(nrow(tabela5), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+# Remuneração por grupamento de atividade econômica
+```{r tabela6, echo=FALSE}
+# O objeto tabela6 já foi gerado no script processa_boletim.R
+kable(tabela6,
+      caption = "Uberlândia/MG: Salário médio real de admissão por grupamento de atividade econômica, com ajustes*, de fevereiro/2025 a janeiro/2026 (em R\\$)",
+      align = c('c', rep('c', ncol(tabela6) - 1))) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  row_spec(nrow(tabela6), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+# Remuneração por porte da empresa
+
+```{r tabela7, echo=FALSE}
+# O objeto tabela7 já foi gerado no script processa_boletim.R
+kable(tabela7,
+      caption = "Uberlândia/MG: Salário médio real de admissão por porte da empresa, com ajustes*,\nde fevereiro/2025 a janeiro/2026 (em R\\$)",
+      align = c('c', rep('c', ncol(tabela7) - 1))) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%
+  column_spec(1, width = "13cm") %>%    # ✅ expande a coluna de texto
+  row_spec(nrow(tabela7), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+```{r grafico6, fig.height=7}
+#Gráfico 6 já foi gerado no script
+print(grafico6)
+```
+\pagebreak
+
+# Remuneração por faixa etária
+```{r grafico7, echo=FALSE}
+#Gráfico 7 já foi gerado no script
+print(grafico7)
+```
+\pagebreak
+
+# Remuneração por gênero e grau de instrução
+```{r grafico8, echo=FALSE}
+#Gráfico 8 já foi gerado no script
+print(grafico8)
+```
+\pagebreak
+
+
+```{r criar_df_metodologia_porte, include=FALSE}
+# Este chunk deve ser colocado antes da seção "Metodologia"
+# ou mesmo logo após o chunk 'setup'.
+
+df_metodologia_porte <- data.frame(
+  Porte = c("MEI e Microempresa", "Pequena Empresa", "Média Empresa", "Grande Empresa"),
+  `Extrativa mineral; Indústria de Transformação; Construção e SIUP` = c("Até 19 empregados", "De 20 a 99 empregados", "De 100 a 499 empregados", "500 empregados ou mais"),
+  `Agropecuária; Comércio e Serviços` = c("Até 9 empregados", "De 10 a 49 empregados", "De 50 a 99 empregados", "100 empregados ou mais"),
+  check.names = FALSE # Importante para permitir nomes de colunas com espaços e caracteres especiais
+)
+```
+
+# Metodologia
+
+O Boletim Mensal do Emprego de Uberlândia, elaborado pelo Centro de Estudos, Pesquisas e Projetos Econômico-Sociais (CEPES) do Instituto de Economia e Relações Internacionais (IERI) da Universidade Federal de Uberlândia, tem como objetivo publicar mensalmente informações sobre a dinâmica do emprego formal neste município.
+
+Os dados apresentados referem-se aos vínculos de emprego celetista, extraídos das informações do Novo Caged (Cadastro Geral de Empregados e Desempregados), captadas e divulgadas pelo Ministério do Trabalho e Emprego (MTE). Neste informativo faz-se a opção por considerar a base ajustada, incluindo as declarações entregues fora do prazo, buscando retratar com maior fidelidade a realidade do mercado de trabalho formal celetista e registrar os saldos de todas as movimentações apresentadas pela relação entre admitidos e desligados. No que se refere ao nível de escolaridade, foi utilizado o maior grau completo para a análise dos dados.
+
+A divisão por porte das empresas segue o critério de quantidade de empregados, conforme Quadro 1, uma vez que não é possível, pelos dados do Novo CAGED, adotar o critério definidos na Lei Geral das Micro e Pequenas Empresas (Lei Federal nº 123 de 2006). Empresas públicas são desconsideradas.
+
+\vspace{1cm}
+```{r quadro1_metodologia, echo=FALSE}
+
+kable(df_metodologia_porte,
+      caption = "Quadro 1 – Critérios para divisão por porte das empresas empregadoras",
+      align = c('l', 'l', 'l')) %>%
+  kable_styling(
+    latex_options = c("striped", "hold_position"),
+    font_size = 11,              
+    full_width = TRUE           
+  ) %>%
+  column_spec(1, width = "6 cm") %>%    
+  column_spec(2, width = "6 cm") %>%   
+  column_spec(3, width = "6 cm") %>%   
+  add_footnote("Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU.")
+```
+\vspace{1cm}
+
+Os resultados referem-se aos dados divulgados pelo MTE no dia 03/03/2026, relativos ao mês de janeiro, com ajustes declarados até janeiro de 2026. Assim sendo, conta com informações entregues fora do prazo ou corrigidas referentes aos meses anteriores a este.
+
+\pagebreak
+
+\includepdf[pages=-, pagecommand={}, width=\paperwidth, height=\paperheight, keepaspectratio]{pagina_final_boletim.pdf}
