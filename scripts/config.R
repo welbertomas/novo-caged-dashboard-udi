@@ -7,7 +7,16 @@ MES_ATUAL <- "202601"
 
 
 # ── Caminhos ─────────────────────────────────────────────
-DIR_RAIZ        <- normalizePath("..", winslash = "/", mustWork = FALSE)
+.config_file <- NULL
+for (i in sys.nframe():1) {
+  if (!is.null(sys.frame(i)$ofile)) {
+    .config_file <- normalizePath(sys.frame(i)$ofile, winslash = "/", mustWork = FALSE)
+    break
+  }
+}
+.config_dir <- if (!is.null(.config_file)) dirname(.config_file) else getwd()
+
+DIR_RAIZ        <- normalizePath(file.path(.config_dir, ".."), winslash = "/", mustWork = FALSE)
 DIR_RAW         <- file.path(DIR_RAIZ, "data_raw")
 DIR_DATA        <- file.path(DIR_RAIZ, "data_processed")
 DIR_SCRIPT      <- file.path(DIR_RAIZ, "scripts")
