@@ -1,6 +1,6 @@
 ---
 title: "Boletim Mensal do Mercado de Trabalho"
-subtitle: "`r {m <- c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"); if (exists("MES_ATUAL")) paste0("Uberlândia/MG - ", m[as.integer(substr(MES_ATUAL,5,6))], " ", substr(MES_ATUAL,1,4)) else "Uberlândia/MG"}`"
+subtitle: "`r {m <- c('Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'); if (exists('MES_ATUAL')) paste0('Uberlândia/MG - ', m[as.integer(substr(MES_ATUAL,5,6))], ' ', substr(MES_ATUAL,1,4)) else 'Uberlândia/MG'}`"
 date: "`r format(Sys.Date(), '%d/%m/%Y')`"
 output:
   pdf_document:
