@@ -13,16 +13,29 @@ options(encoding = "UTF-8", scipen = 999)
 # ── Parâmetros ────────────────────────────────────────────────────────────────
 global_periodo_referencia <- MES_ATUAL
 global_arquivo_tabelas    <- TABELAS_BOLETIM
-sm_2025 <- SM["2025"]
-sm_2026 <- SM["2026"]
 
 data_ref       <- as.Date(paste0(global_periodo_referencia, "01"), "%Y%m%d")
 periodo_12meses <- as.numeric(format(seq(data_ref, by = "-12 months", length.out = 2)[2], "%Y%m"))
+ano_ref <- as.numeric(format(data_ref, "%Y"))
 
 # ── Vetores de lookup (substituem case_when gigantes) ────────────────────────
 
 meses_pt <- c("Janeiro","Fevereiro","Março","Abril","Maio","Junho",
               "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro")
+mes_ref_num <- as.integer(format(data_ref, "%m"))
+mes_ref_label <- meses_pt[mes_ref_num]
+mes_ref_label_lower <- tolower(mes_ref_label)
+data_inicio_serie <- seq(data_ref, by = "-12 months", length.out = 2)[2]
+mes_inicio_serie <- meses_pt[as.integer(format(data_inicio_serie, "%m"))]
+ano_inicio_serie <- as.integer(format(data_inicio_serie, "%Y"))
+periodo_label_12m <- paste0("de ", tolower(mes_inicio_serie), "/", ano_inicio_serie,
+                            " a ", mes_ref_label_lower, "/", ano_ref)
+periodo_label_mes <- paste0(mes_ref_label_lower, " de ", ano_ref)
+fonte_grafico <- paste0(
+  "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. ",
+  "*Dados com ajustes declarados até ", mes_ref_label_lower, " de ", ano_ref, "."
+)
+fonte_tabela  <- fonte_grafico
 
 setores_map <- c(
   A = "Agropecuária",
@@ -235,7 +248,10 @@ saldo_wide <- function(df, grp_var, levels = NULL) {
     (\(d) {
       cols <- if (!is.null(levels)) levels else setdiff(names(d), c("competênciamov","data"))
       d <- d[, c("competênciamov","data", intersect(cols, names(d)))]
-      acum <- summarise(d, across(all_of(intersect(cols, names(d))), sum, na.rm = TRUE)) |>
+      acum <- d |>
+        filter(competênciamov >= (ano_ref * 100 + 1),
+               competênciamov <= global_periodo_referencia) |>
+        summarise(across(all_of(intersect(cols, names(d))), sum, na.rm = TRUE)) |>
         mutate(data = paste0("Acum. ", ano_ref), competênciamov = NA_real_)
       bind_rows(d, acum)
     })()
@@ -281,8 +297,6 @@ tabela4_grupo <- function(df, grp_var, levels = NULL,
     select(Variáveis, Admissões, Desligamentos, Saldo)
 }
 
-ano_ref <- as.numeric(ANO_ATUAL)
-
 # ── Dados agregados ───────────────────────────────────────────────────────────
 
 # Tabela 1 / Gráfico 1 — Saldo geral
@@ -292,6 +306,10 @@ df_geral_saldo <- df_processed |>
             saldomovimentação = sum(saldomovimentação),
             saldo_mes = first(saldo_mes), .groups = "drop") |>
   arrange(competênciamov)
+
+df_ano_ref <- df_geral_saldo |>
+  filter(competênciamov >= (ano_ref * 100 + 1),
+         competênciamov <= global_periodo_referencia)
 
 # Tabela 2 — Saldo por setor
 df_saldo_setor <- df_processed |>
@@ -369,8 +387,6 @@ df_g8 <- df_base_mes |>
 
 # ── Temas e paletas de cores ──────────────────────────────────────────────────
 bar_colors_saldo <- c("TRUE" = "steelblue", "FALSE" = "darkred")
-fonte_grafico <- "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026."
-fonte_tabela  <- fonte_grafico
 
 tema_base <- theme_minimal() %+replace% theme(
   plot.title   = element_text(size = 12, face = "bold", hjust = 0.5,
@@ -389,7 +405,7 @@ grafico1 <- ggplot(df_geral_saldo, aes(x = data, y = saldo_mes, fill = saldo_mes
             vjust = ifelse(df_geral_saldo$saldo_mes > 0, -0.5, 1.2), size = 3.5) +
   scale_y_continuous(labels = fmt_num, limits = c(-3500, 2000),
                      breaks = seq(-3500, 2000, 1000)) +
-  labs(title = "Gráfico 1 – Uberlândia/MG: Saldo do emprego formal, com ajustes*,\nde fevereiro/2025 a janeiro/2026",
+  labs(title = paste0("Gráfico 1 – Uberlândia/MG: Saldo do emprego formal,\n", periodo_label_12m, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
@@ -403,7 +419,7 @@ grafico2 <- ggplot(df_g2, aes(x = fct_rev(tamanho), y = saldomovimentação, fil
             hjust = ifelse(df_g2$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
   facet_wrap(~setores, scales = "free_y", ncol = 1, strip.position = "left") +
   coord_flip() +
-  labs(title = "Gráfico 2 – Uberlândia/MG: Saldo por setor de atividade e porte da empresa\nem janeiro de 2026",
+  labs(title = paste0("Gráfico 2 – Uberlândia/MG: Saldo por setor de atividade e porte da empresa\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
   theme(strip.text = element_text(size = 10, face = "bold"),
@@ -417,7 +433,7 @@ grafico3 <- ggplot(df_g3, aes(x = fct_rev(faixa_etaria), y = saldomovimentação
   geom_text(aes(label = fmt_num(saldomovimentação)),
             hjust = ifelse(df_g3$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
   coord_flip() +
-  labs(title = "Gráfico 3 – Uberlândia/MG: Saldo por faixa etária do empregado, com ajustes*,\nem janeiro de 2026",
+  labs(title = paste0("Gráfico 3 – Uberlândia/MG: Saldo por faixa etária do empregado\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base + theme(panel.grid.major.y = element_blank())
 
@@ -430,7 +446,7 @@ grafico4 <- ggplot(df_g4, aes(x = fct_rev(gdi_leg), y = saldomovimentação, fil
   facet_wrap(~genero, scales = "free_y") +
   coord_flip() +
   scale_y_continuous(limits = c(-550, 600), breaks = seq(-550, 600, 200)) +
-  labs(title = "Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado,\ncom ajustes*, em janeiro de 2026",
+  labs(title = paste0("Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
   theme(strip.text = element_text(size=10, face="bold"),
@@ -441,7 +457,7 @@ grafico4 <- ggplot(df_g4, aes(x = fct_rev(gdi_leg), y = saldomovimentação, fil
 grafico5 <- ggplot(df_remuneracao_geral, aes(x = data, y = remuneracao_udi_adm)) +
   geom_col(fill = "steelblue", width = 0.7) +
   geom_text(aes(label = fmt_num(round(remuneracao_udi_adm))), vjust = -0.5, size = 3) +
-  labs(title = "Gráfico 5 – Uberlândia/MG: Salário médio real de admissão, com ajustes*,\nde fevereiro/2025 a janeiro/2026 (em R$)",
+  labs(title = paste0("Gráfico 5 – Uberlândia/MG: Salário médio real de admissão\n", periodo_label_12m, " (em R$), com ajustes*"),
        x = NULL, y = "Salário de admissão", caption = fonte_grafico) +
   tema_base +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
@@ -469,18 +485,18 @@ make_grafico_salario <- function(df, x_var, fill_var = NULL,
 
 grafico6 <- make_grafico_salario(
   df_g6, "tamanho", "setores",
-  "Gráfico 6 – Uberlândia/MG: Salário médio real de admissão por grupamento\nde atividade econômica e porte da empresa, com ajustes*, janeiro de 2026 (em R$)"
+  paste0("Gráfico 6 – Uberlândia/MG: Salário médio real de admissão por grupamento\nde atividade econômica e porte da empresa, ", periodo_label_mes, " (em R$), com ajustes*")
 )
 
 grafico7 <- make_grafico_salario(
   df_g7, "faixa_etaria",
-  title = "Gráfico 7 – Uberlândia/MG: Salário médio real de admissão\npor faixa etária, com ajustes*, janeiro de 2026 (em R$)",
+  title = paste0("Gráfico 7 – Uberlândia/MG: Salário médio real de admissão\npor faixa etária, ", periodo_label_mes, " (em R$), com ajustes*"),
   x_lim = c(0, 3200)
 )
 
 grafico8 <- make_grafico_salario(
   df_g8, "gdi_leg", "genero",
-  "Gráfico 8 – Uberlândia/MG: Salário médio real de admissão\npor gênero e grau de instrução do empregado,\ncom ajustes*, janeiro de 2026 (em R$)",
+  paste0("Gráfico 8 – Uberlândia/MG: Salário médio real de admissão\npor gênero e grau de instrução do empregado, ", periodo_label_mes, " (em R$), com ajustes*"),
   x_lim = c(0, 10000)
 )
 
@@ -492,9 +508,9 @@ tabela1 <- df_geral_saldo |>
          Saldo = saldomovimentação) |>
   mutate(across(where(is.numeric), fmt_num)) |>
   add_row(`Mês/Ano` = paste0("Saldo acumulado no ano ", ano_ref),
-          Admissões    = fmt_num(sum(df_geral_saldo$admissoes)),
-          Desligamentos = fmt_num(sum(df_geral_saldo$demissoes)),
-          Saldo        = fmt_num(sum(df_geral_saldo$saldomovimentação)))
+          Admissões    = fmt_num(sum(df_ano_ref$admissoes)),
+          Desligamentos = fmt_num(sum(df_ano_ref$demissoes)),
+          Saldo        = fmt_num(sum(df_ano_ref$saldomovimentação)))
 
 # Tabela 2
 tabela2 <- df_saldo_setor |>
@@ -559,4 +575,3 @@ tabela5 <- df_remuneracao_geral |>
 # Tabelas 6 e 7 — já tratadas pela função remuneracao_wide()
 tabela6 <- df_tabela6
 tabela7 <- df_tabela7
-
