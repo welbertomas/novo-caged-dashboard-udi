@@ -30,6 +30,11 @@ MES_NUMERO <- substr(MES_ATUAL, 5, 6)
 DIR_TEMP <- file.path(DIR_RAIZ, "_temp_ftp")
 if (!dir.exists(DIR_TEMP)) dir.create(DIR_TEMP, recursive = TRUE)
 
+# Sempre remove _temp_ftp ao final (inclusive em caso de erro)
+on.exit({
+  if (dir.exists(DIR_TEMP)) unlink(DIR_TEMP, recursive = TRUE, force = TRUE)
+}, add = TRUE)
+
 BASE_URL_FTP <- "ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED"
 
 # ── Utilitários e variáveis ───────────────────────────────
@@ -76,7 +81,19 @@ rmarkdown::render(
 )
 
 # ── Limpeza ───────────────────────────────────────────────
-unlink(DIR_TEMP, recursive = TRUE)
+# Remove artefatos intermediários do LaTeX/knitr, mantendo apenas o PDF final
+base_boletim <- file.path(boletim_dir, paste0("boletim", MES_ATUAL))
+artefatos_boletim <- c(
+  paste0(base_boletim, ".tex"),
+  paste0(base_boletim, ".log"),
+  paste0(base_boletim, ".aux"),
+  paste0(base_boletim, ".out"),
+  paste0(base_boletim, ".toc"),
+  paste0(base_boletim, ".nav"),
+  paste0(base_boletim, ".snm"),
+  paste0(base_boletim, "_files")
+)
+unlink(artefatos_boletim[file.exists(artefatos_boletim)], recursive = TRUE, force = TRUE)
 
 cat("\n==============================================\n")
 cat("Processamento concluído com sucesso!\n")
