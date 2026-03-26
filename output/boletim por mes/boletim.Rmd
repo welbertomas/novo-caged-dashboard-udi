@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 )
 
 # Executar o script principal
-source("processa_boletim.R")
+source(file.path(DIR_SCRIPT, "processa_boletim.R"))
 
 # Função para formatar números
 format_number <- function(x) {
@@ -44,7 +44,7 @@ format_currency <- function(x) {
 
 # Calcular dados do último mês
 ultimo_mes <- df_geral_saldo %>%
-  filter(competênciamov == periodo_referencia_num)
+  filter(competênciamov == global_periodo_referencia)
 
 saldo_atual <- ultimo_mes$saldomovimentação
 admissoes_atual <- ultimo_mes$admissoes
@@ -137,7 +137,7 @@ kable(tabela3_data,
       caption = "Uberlândia/MG: Saldo do emprego formal segundo porte da empresa, com ajustes*, de fevereiro/2025 a janeiro/2026",
       align = c('c', rep('c', ncol(tabela3_data) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
-  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  column_spec(1, width = "10cm") %>%  
   row_spec(nrow(tabela3_data), bold = TRUE) %>%
     footnote(
       general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
@@ -169,15 +169,46 @@ print(grafico4)
 ```
 \pagebreak
 
-```{r tabela4, echo=FALSE}
-# O objeto tabela4 já foi gerado no script processa_boletim.R
-# Nota: A tabela4 já inclui linhas de cabeçalho e de total.
-kable(tabela4,
+```{r tabela4a, echo=FALSE}
+
+kable(tabela4a,
       caption = "Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), com ajustes*, janeiro de 2026.",
       align = c('c', 'c', 'c', 'c')) %>%
-  kable_styling(latex_options = c("striped", "hold_position")) %>%  # ✅ scale_down removido
-  column_spec(1, width = "14cm") %>%   # ✅ expande a coluna de texto (Variáveis)
-  row_spec(which(tabela4$Variáveis == "Total mês de janeiro"), bold = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%  
+  column_spec(1, width = "14cm") %>%  
+  row_spec(which(tabela4a$Variáveis == "Total mês de janeiro"), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "Continua",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+```{r tabela4b, echo=FALSE}
+
+kable(tabela4b,
+      caption = "Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), com ajustes*, janeiro de 2026.",
+      align = c('c', 'c', 'c', 'c')) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%  
+  column_spec(1, width = "14cm") %>%  
+  row_spec(which(tabela4b$Variáveis == "Total mês de janeiro"), bold = TRUE) %>%
+    footnote(
+      general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
+      general_title = "Continua",
+      threeparttable = TRUE
+    )
+```
+\pagebreak
+
+```{r tabela4c, echo=FALSE}
+
+kable(tabela4c,
+      caption = "Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), com ajustes*, janeiro de 2026.",
+      align = c('c', 'c', 'c', 'c')) %>%
+  kable_styling(latex_options = c("striped", "hold_position")) %>%  
+  column_spec(1, width = "14cm") %>%  
+  row_spec(which(tabela4c$Variáveis == "Total mês de janeiro"), bold = TRUE) %>%
     footnote(
       general = "Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.",
       general_title = "",
@@ -303,7 +334,3 @@ kable(df_metodologia_porte,
 \vspace{1cm}
 
 Os resultados referem-se aos dados divulgados pelo MTE no dia 03/03/2026, relativos ao mês de janeiro, com ajustes declarados até janeiro de 2026. Assim sendo, conta com informações entregues fora do prazo ou corrigidas referentes aos meses anteriores a este.
-
-\pagebreak
-
-\includepdf[pages=-, pagecommand={}, width=\paperwidth, height=\paperheight, keepaspectratio]{pagina_final_boletim.pdf}

@@ -4,8 +4,6 @@
 
 # ── Competência a processar (formato AAAAMM) ──────────────
 MES_ATUAL <- "202601"
-data_ref <- as.Date(paste0(MES_ATUAL, "01"), "%Y%m%d")
-DOZEMESES <- as.numeric(format(seq(data_ref, by = "-12 months", length.out = 2)[2], "%Y%m"))
 
 
 # ── Caminhos ─────────────────────────────────────────────
