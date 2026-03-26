@@ -183,6 +183,20 @@
 #' @param dt    data.table com os microdados
 #' @param modo  "historico" (padrão) ou "ultimomes"
 criar_variaveis <- function(dt, modo = "historico") {
+  .sm_ano <- function(ano_int) {
+    chave <- as.character(ano_int)
+    if (!is.na(SM[chave])) return(as.numeric(SM[chave]))
+    anos_disp <- sort(as.integer(names(SM)))
+    ano_ref <- max(anos_disp[anos_disp <= ano_int], na.rm = TRUE)
+    if (!is.finite(ano_ref)) {
+      stop(sprintf("Sem salário mínimo configurado para o ano %s.", ano_int))
+    }
+    warning(sprintf(
+      "Salário mínimo de %s não encontrado em config.R; usando valor de %s.",
+      ano_int, ano_ref
+    ))
+    as.numeric(SM[as.character(ano_ref)])
+  }
 
   # ── Admissões e Demissões ─────────────────────────────
   if (modo == "historico") {
@@ -237,8 +251,9 @@ criar_variaveis <- function(dt, modo = "historico") {
     # Remuneração com filtro de outliers para todos os anos
     dt[, remuneracao_udi_adm := NA_real_]
     dt[, remuneracao_udi_dem := NA_real_]
-    for (a in as.integer(names(SM))) {
-      sm <- SM[as.character(a)]
+    anos_dt <- sort(unique(dt$ano))
+    for (a in anos_dt) {
+      sm <- .sm_ano(a)
       dt[ano == a & salario > sm * 0.3 & salario < sm * 150 &
          saldomovimentação == 1L &
          (is.na(indtrabintermitente) | indtrabintermitente != 1L),
@@ -251,7 +266,7 @@ criar_variaveis <- function(dt, modo = "historico") {
 
   } else {
     # Remuneração apenas para o ano atual
-    sm <- SM[ANO_ATUAL]
+    sm <- .sm_ano(as.integer(ANO_ATUAL))
     dt[, remuneracao_adm := NA_real_]
     dt[ano == as.integer(ANO_ATUAL) &
        salario > sm * 0.3 & salario < sm * 150 &
