@@ -144,6 +144,9 @@
 % ---- Página de capa personalizada (DO SEU ORIGINAL) ----
 \makeatletter
 \definecolor{cepesblue}{HTML}{4682B4}
+% Compatibilidade com Pandoc/R Markdown: garante existência de \@subtitle
+\providecommand{\@subtitle}{}
+\providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
 \renewcommand{\maketitle}{
   \thispagestyle{empty}
   \vspace*{2cm}
@@ -198,12 +201,10 @@
 \begin{document}
 \maketitle
 
-\maketitle{}
-
 \section{Saldo das Movimentações
 Empregatícias}\label{saldo-das-movimentauxe7uxf5es-empregatuxedcias}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico1-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico1-1} \end{center}
 
 \pagebreak
 
@@ -306,13 +307,13 @@ competênciamov & data & MEI e Micro & Pequena & Média & Grande & Administraç�
 
 \pagebreak
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico2-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico2-1} \end{center}
 
 \pagebreak
 
 \section{Saldo por faixa etária}\label{saldo-por-faixa-etuxe1ria}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico3-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico3-1} \end{center}
 \pagebreak
 
 \section{Saldo por gênero e grau de
@@ -320,7 +321,7 @@ instrução}\label{saldo-por-guxeanero-e-grau-de-instruuxe7uxe3o}
 
 \vspace{-0.5cm}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico4-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico4-1} \end{center}
 \pagebreak
 
 \begin{ThreePartTable}
@@ -410,7 +411,7 @@ Superior Completo & 1.084 & -1.147 & -63\\
 
 \section{Remuneração}\label{remunerauxe7uxe3o}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico5-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico5-1} \end{center}
 \pagebreak
 
 \begin{ThreePartTable}
@@ -512,19 +513,19 @@ competênciamov & data & MEI e Micro & Pequena & Média & Grande\\
 \end{ThreePartTable}
 \pagebreak
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico6-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico6-1} \end{center}
 \pagebreak
 
 \section{Remuneração por faixa
 etária}\label{remunerauxe7uxe3o-por-faixa-etuxe1ria}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico7-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico7-1} \end{center}
 \pagebreak
 
 \section{Remuneração por gênero e grau de
 instrução}\label{remunerauxe7uxe3o-por-guxeanero-e-grau-de-instruuxe7uxe3o}
 
-\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico8-1} \end{center}
+\begin{center}\includegraphics{C:\Users\User\Projetos\NOVO-C~1\output\BOLETI~1\BOLETI~1/figure-latex/grafico8-1} \end{center}
 \pagebreak
 
 \section{Metodologia}\label{metodologia}
