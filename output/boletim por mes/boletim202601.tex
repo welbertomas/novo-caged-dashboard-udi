@@ -1,0 +1,577 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  brazilian,
+  12pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=2cm,landscape]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% ------------------------------------------------
+% FONTES (necessário para XeLaTeX)
+% ------------------------------------------------
+\usepackage{fontspec}
+
+% ------------------------------------------------
+% FIGURAS
+% ------------------------------------------------
+\usepackage{graphicx}
+\usepackage{float}
+
+% ------------------------------------------------
+% TABELAS (necessário para kableExtra)
+% ------------------------------------------------
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{colortbl}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage{makecell}
+\usepackage{tabularx}
+
+% ------------------------------------------------
+% ALINHAMENTO NUMÉRICO
+% ------------------------------------------------
+\usepackage{siunitx}
+\sisetup{
+  group-separator = {.},
+  group-minimum-digits = 3
+}
+
+% ------------------------------------------------
+% CORES
+% ------------------------------------------------
+\usepackage{xcolor}
+
+% ------------------------------------------------
+% CAPTIONS (títulos das tabelas em NEGRITO)
+% ------------------------------------------------
+\usepackage{caption}
+\captionsetup{
+  labelfont=bf,
+  textfont=bf,
+  font={small},
+  justification=centering,
+  singlelinecheck=false,
+  skip=6pt
+}
+
+% ---- ESPAÇAMENTO VERTICAL DAS LINHAS----
+\renewcommand{\arraystretch}{1.7}
+
+% ---- LONGTABLE SPACING (DO SEU ORIGINAL) ----
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+
+% ------------------------------------------------
+% FOOTNOTE EM TABELAS
+% ------------------------------------------------
+\usepackage{footnote}
+\makesavenoteenv{longtable}
+\makesavenoteenv{tabular}
+
+% ------------------------------------------------
+% PDF EXTERNO
+% ------------------------------------------------
+\usepackage{pdfpages}
+
+% ------------------------------------------------
+% MELHOR TIPOGRAFIA
+% ------------------------------------------------
+\usepackage{microtype}
+
+% ---- Página de capa personalizada (DO SEU ORIGINAL) ----
+\makeatletter
+\definecolor{cepesblue}{HTML}{4682B4}
+\renewcommand{\maketitle}{
+  \thispagestyle{empty}
+  \vspace*{2cm}
+  \begin{center}
+    {\Huge\bfseries\sffamily\color{cepesblue} \@title \par}
+    \vspace{1cm}
+    {\huge\bfseries\sffamily \@subtitle \par}
+    \vspace{2cm}
+    \includegraphics[width=0.4\textwidth]{logos.png}
+    \vfill
+    {\large \@date \par}
+  \end{center}
+  \clearpage
+}
+\makeatother
+
+% --- fim header.tex ---
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Boletim Mensal do Mercado de Trabalho},
+  pdflang={pt-BR},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Boletim Mensal do Mercado de Trabalho}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Uberlândia/MG - Janeiro 2026}
+\author{}
+\date{\vspace{-2.5em}26/03/2026}
+
+\begin{document}
+\maketitle
+
+\maketitle{}
+
+\section{Saldo das Movimentações
+Empregatícias}\label{saldo-das-movimentauxe7uxf5es-empregatuxedcias}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico1-1} \end{center}
+
+\pagebreak
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{13cm}ccc}
+\caption{\label{tab:tabela1}\textbf{Uberlândia/MG: Movimentação do emprego formal, de janeiro/2025 a janeiro/2026, com ajustes*}}\\
+\toprule
+Mês/Ano & Admissões & Desligamentos & Saldo\\
+\midrule
+\cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{12.905} & \cellcolor{gray!10}{-13.195} & \cellcolor{gray!10}{-290}\\
+Fevereiro/2025 & 14.735 & -13.067 & 1.668\\
+\cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{12.674} & \cellcolor{gray!10}{-12.262} & \cellcolor{gray!10}{412}\\
+Abril/2025 & 12.691 & -12.200 & 491\\
+\cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{12.752} & \cellcolor{gray!10}{-12.588} & \cellcolor{gray!10}{164}\\
+\addlinespace
+Junho/2025 & 12.399 & -11.460 & 939\\
+\cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{12.584} & \cellcolor{gray!10}{-12.696} & \cellcolor{gray!10}{-112}\\
+Agosto/2025 & 12.081 & -12.135 & -54\\
+\cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{12.763} & \cellcolor{gray!10}{-11.773} & \cellcolor{gray!10}{990}\\
+Outubro/2025 & 12.899 & -12.000 & 899\\
+\addlinespace
+\cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{10.903} & \cellcolor{gray!10}{-10.925} & \cellcolor{gray!10}{-22}\\
+Dezembro/2025 & 9.216 & -12.379 & -3.163\\
+\cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{12.153} & \cellcolor{gray!10}{-11.679} & \cellcolor{gray!10}{474}\\
+\textbf{Saldo acumulado no ano 2026} & \textbf{12.153} & \textbf{-11.679} & \textbf{474}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\section{Saldo por grupamento de atividade
+econômica}\label{saldo-por-grupamento-de-atividade-econuxf4mica}
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{10cm}ccccc}
+\caption{\label{tab:tabela2}Uberlândia/MG: Saldo do emprego formal por setor de atividade econômica, de janeiro/2025 a janeiro/2026, com ajustes*}\\
+\toprule
+Mês / Ano & Agropecuária & Indústria & Construção & Comércio & Serviços\\
+\midrule
+\cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{44} & \cellcolor{gray!10}{286} & \cellcolor{gray!10}{370} & \cellcolor{gray!10}{-210} & \cellcolor{gray!10}{-780}\\
+Fevereiro/2025 & -236 & 80 & 211 & 407 & 1.206\\
+\cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{440} & \cellcolor{gray!10}{-151} & \cellcolor{gray!10}{-26} & \cellcolor{gray!10}{-56} & \cellcolor{gray!10}{205}\\
+Abril/2025 & 187 & -80 & 143 & 6 & 238\\
+\cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{-280} & \cellcolor{gray!10}{74} & \cellcolor{gray!10}{-83} & \cellcolor{gray!10}{283} & \cellcolor{gray!10}{171}\\
+\addlinespace
+Junho/2025 & 339 & 126 & -53 & 234 & 293\\
+\cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{-102} & \cellcolor{gray!10}{45} & \cellcolor{gray!10}{-55} & \cellcolor{gray!10}{192} & \cellcolor{gray!10}{-192}\\
+Agosto/2025 & -157 & 88 & -149 & 48 & 116\\
+\cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{68} & \cellcolor{gray!10}{31} & \cellcolor{gray!10}{130} & \cellcolor{gray!10}{464} & \cellcolor{gray!10}{297}\\
+Outubro/2025 & 79 & -58 & 237 & 225 & 416\\
+\addlinespace
+\cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{110} & \cellcolor{gray!10}{-16} & \cellcolor{gray!10}{-255} & \cellcolor{gray!10}{277} & \cellcolor{gray!10}{-138}\\
+Dezembro/2025 & -188 & -223 & -588 & -449 & -1.715\\
+\cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{101} & \cellcolor{gray!10}{307} & \cellcolor{gray!10}{401} & \cellcolor{gray!10}{-141} & \cellcolor{gray!10}{-194}\\
+\textbf{Acum. 2026} & \textbf{101} & \textbf{307} & \textbf{401} & \textbf{-141} & \textbf{-194}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\section{Saldo por porte da empresa}\label{saldo-por-porte-da-empresa}
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{10cm}cccccc}
+\caption{\label{tab:tabela3}Uberlândia/MG: Saldo do emprego formal segundo porte da empresa, de janeiro/2025 a janeiro/2026, com ajustes*}\\
+\toprule
+competênciamov & data & MEI e Micro & Pequena & Média & Grande & Administração Pública\\
+\midrule
+\cellcolor{gray!10}{202501} & \cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{558} & \cellcolor{gray!10}{89} & \cellcolor{gray!10}{-21} & \cellcolor{gray!10}{-918} & \cellcolor{gray!10}{2}\\
+202502 & Fevereiro/2025 & 1.155 & 527 & 370 & -381 & -3\\
+\cellcolor{gray!10}{202503} & \cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{147} & \cellcolor{gray!10}{-275} & \cellcolor{gray!10}{-43} & \cellcolor{gray!10}{581} & \cellcolor{gray!10}{2}\\
+202504 & Abril/2025 & 697 & -36 & -231 & 62 & -1\\
+\cellcolor{gray!10}{202505} & \cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{605} & \cellcolor{gray!10}{-227} & \cellcolor{gray!10}{72} & \cellcolor{gray!10}{-284} & \cellcolor{gray!10}{-2}\\
+\addlinespace
+202506 & Junho/2025 & 768 & -199 & 40 & 330 & 0\\
+\cellcolor{gray!10}{202507} & \cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{364} & \cellcolor{gray!10}{-319} & \cellcolor{gray!10}{-41} & \cellcolor{gray!10}{-113} & \cellcolor{gray!10}{-3}\\
+202508 & Agosto/2025 & 345 & -208 & -134 & -56 & -1\\
+\cellcolor{gray!10}{202509} & \cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{895} & \cellcolor{gray!10}{7} & \cellcolor{gray!10}{127} & \cellcolor{gray!10}{-41} & \cellcolor{gray!10}{2}\\
+202510 & Outubro/2025 & 575 & 19 & 75 & 230 & 0\\
+\addlinespace
+\cellcolor{gray!10}{202511} & \cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{386} & \cellcolor{gray!10}{-40} & \cellcolor{gray!10}{161} & \cellcolor{gray!10}{-527} & \cellcolor{gray!10}{-2}\\
+202512 & Dezembro/2025 & -1.219 & -1.065 & -93 & -787 & 1\\
+\cellcolor{gray!10}{202601} & \cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{567} & \cellcolor{gray!10}{78} & \cellcolor{gray!10}{18} & \cellcolor{gray!10}{-193} & \cellcolor{gray!10}{4}\\
+\textbf{NA} & \textbf{Acum. 2026} & \textbf{567} & \textbf{78} & \textbf{18} & \textbf{-193} & \textbf{4}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+
+\pagebreak
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico2-1} \end{center}
+
+\pagebreak
+
+\section{Saldo por faixa etária}\label{saldo-por-faixa-etuxe1ria}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico3-1} \end{center}
+\pagebreak
+
+\section{Saldo por gênero e grau de
+instrução}\label{saldo-por-guxeanero-e-grau-de-instruuxe7uxe3o}
+
+\vspace{-0.5cm}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico4-1} \end{center}
+\pagebreak
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item \textit{Continua} 
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{14cm}ccc}
+\caption{\label{tab:tabela4a}Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), janeiro de 2026, com ajustes*.}\\
+\toprule
+Variáveis & Admissões & Desligamentos & Saldo\\
+\midrule
+\cellcolor{gray!10}{Grupamento de atividade econômica} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+Agropecuária & 546 & -445 & 101\\
+\cellcolor{gray!10}{Indústria} & \cellcolor{gray!10}{1.414} & \cellcolor{gray!10}{-1.107} & \cellcolor{gray!10}{307}\\
+Construção & 1.403 & -1.002 & 401\\
+\cellcolor{gray!10}{Comércio} & \cellcolor{gray!10}{3.121} & \cellcolor{gray!10}{-3.262} & \cellcolor{gray!10}{-141}\\
+\addlinespace
+Serviços & 5.669 & -5.863 & -194\\
+\cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+Porte da empresa &  &  & \\
+\cellcolor{gray!10}{MEI e Micro} & \cellcolor{gray!10}{3.492} & \cellcolor{gray!10}{-2.925} & \cellcolor{gray!10}{567}\\
+Pequena & 3.484 & -3.406 & 78\\
+\addlinespace
+\cellcolor{gray!10}{Média} & \cellcolor{gray!10}{1.837} & \cellcolor{gray!10}{-1.819} & \cellcolor{gray!10}{18}\\
+Grande & 3.327 & -3.520 & -193\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item \textit{Continua} 
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{14cm}ccc}
+\caption{\label{tab:tabela4b}Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), janeiro de 2026, com ajustes*.}\\
+\toprule
+Variáveis & Admissões & Desligamentos & Saldo\\
+\midrule
+\cellcolor{gray!10}{Faixa Etária} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+17 ou menos & 539 & -294 & 245\\
+\cellcolor{gray!10}{18-24} & \cellcolor{gray!10}{3.288} & \cellcolor{gray!10}{-2.991} & \cellcolor{gray!10}{297}\\
+25-29 & 2.045 & -2.093 & -48\\
+\cellcolor{gray!10}{30-39} & \cellcolor{gray!10}{3.049} & \cellcolor{gray!10}{-3.070} & \cellcolor{gray!10}{-21}\\
+\addlinespace
+40-49 & 2.070 & -2.078 & -8\\
+\cellcolor{gray!10}{50-59} & \cellcolor{gray!10}{939} & \cellcolor{gray!10}{-864} & \cellcolor{gray!10}{75}\\
+60 ou mais & 223 & -289 & -66\\
+\cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+Gênero &  &  & \\
+\addlinespace
+\cellcolor{gray!10}{Homem} & \cellcolor{gray!10}{6.806} & \cellcolor{gray!10}{-6.104} & \cellcolor{gray!10}{702}\\
+Mulher & 5.347 & -5.575 & -228\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{14cm}ccc}
+\caption{\label{tab:tabela4c}Uberlândia/MG: movimentação e saldo do emprego formal segundo grupamento de atividade econômica, porte da empresa e perfil dos empregados (por faixa etária, gênero e grau de instrução), janeiro de 2026, com ajustes*.}\\
+\toprule
+Variáveis & Admissões & Desligamentos & Saldo\\
+\midrule
+\cellcolor{gray!10}{Grau de instrução} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{} & \cellcolor{gray!10}{}\\
+Analfabeto & 70 & -45 & 25\\
+\cellcolor{gray!10}{Fundamental Incompleto} & \cellcolor{gray!10}{765} & \cellcolor{gray!10}{-697} & \cellcolor{gray!10}{68}\\
+Fundamental Completo & 1.976 & -1.804 & 172\\
+\cellcolor{gray!10}{Médio Completo} & \cellcolor{gray!10}{8.139} & \cellcolor{gray!10}{-7.825} & \cellcolor{gray!10}{314}\\
+\addlinespace
+Superior Completo & 1.084 & -1.147 & -63\\
+\cellcolor{gray!10}{Pós-Graduação} & \cellcolor{gray!10}{119} & \cellcolor{gray!10}{-161} & \cellcolor{gray!10}{-42}\\
+ &  &  & \\
+\textbf{\cellcolor{gray!10}{Total mês de referência}} & \textbf{\cellcolor{gray!10}{12.153}} & \textbf{\cellcolor{gray!10}{-11.679}} & \textbf{\cellcolor{gray!10}{474}}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\section{Remuneração}\label{remunerauxe7uxe3o}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico5-1} \end{center}
+\pagebreak
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{5cm}cccc}
+\caption{\label{tab:tabela5}Uberlândia/MG: Salário médio real de admissão e demissão, de janeiro/2025 a janeiro/2026 (em R\$), com ajustes*}\\
+\toprule
+Ano / Mês & Salário de Admissão & var\_adm & Salário de Demissão & var\_dem\\
+\midrule
+\cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{2.157} & \cellcolor{gray!10}{NA\%} & \cellcolor{gray!10}{2.206} & \cellcolor{gray!10}{NA\%}\\
+Fevereiro/2025 & 2.157 & 0.03\% & 2.203 & -0.13\%\\
+\cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{2.176} & \cellcolor{gray!10}{0.90\%} & \cellcolor{gray!10}{2.276} & \cellcolor{gray!10}{3.31\%}\\
+Abril/2025 & 2.192 & 0.70\% & 2.256 & -0.88\%\\
+\cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{2.237} & \cellcolor{gray!10}{2.04\%} & \cellcolor{gray!10}{2.260} & \cellcolor{gray!10}{0.14\%}\\
+\addlinespace
+Junho/2025 & 2.201 & -1.60\% & 2.258 & -0.08\%\\
+\cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{2.230} & \cellcolor{gray!10}{1.33\%} & \cellcolor{gray!10}{2.273} & \cellcolor{gray!10}{0.67\%}\\
+Agosto/2025 & 2.237 & 0.34\% & 2.308 & 1.56\%\\
+\cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{2.201} & \cellcolor{gray!10}{-1.62\%} & \cellcolor{gray!10}{2.260} & \cellcolor{gray!10}{-2.10\%}\\
+Outubro/2025 & 2.209 & 0.33\% & 2.277 & 0.76\%\\
+\addlinespace
+\cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{2.221} & \cellcolor{gray!10}{0.55\%} & \cellcolor{gray!10}{2.356} & \cellcolor{gray!10}{3.45\%}\\
+Dezembro/2025 & 2.242 & 0.95\% & 2.317 & -1.66\%\\
+\cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{2.263} & \cellcolor{gray!10}{0.96\%} & \cellcolor{gray!10}{2.366} & \cellcolor{gray!10}{2.14\%}\\
+\textbf{Acum. 2026 (\%)} & \textbf{} & \textbf{0.00\%} & \textbf{} & \textbf{0.00\%}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\section{Remuneração por grupamento de atividade
+econômica}\label{remunerauxe7uxe3o-por-grupamento-de-atividade-econuxf4mica}
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{10cm}cccccc}
+\caption{\label{tab:tabela6}Uberlândia/MG: Salário médio real de admissão por grupamento de atividade econômica, de janeiro/2025 a janeiro/2026 (em R\$), com ajustes*}\\
+\toprule
+competênciamov & data & Agropecuária & Comércio & Construção & Indústria & Serviços\\
+\midrule
+\cellcolor{gray!10}{202501} & \cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{2.316} & \cellcolor{gray!10}{1.907} & \cellcolor{gray!10}{2.134} & \cellcolor{gray!10}{2.257} & \cellcolor{gray!10}{2.258}\\
+202502 & Fevereiro/2025 & 2.326 & 1.880 & 2.089 & 2.288 & 2.266\\
+\cellcolor{gray!10}{202503} & \cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{2.256} & \cellcolor{gray!10}{1.865} & \cellcolor{gray!10}{2.091} & \cellcolor{gray!10}{2.413} & \cellcolor{gray!10}{2.298}\\
+202504 & Abril/2025 & 2.146 & 1.912 & 2.114 & 2.213 & 2.348\\
+\cellcolor{gray!10}{202505} & \cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{2.186} & \cellcolor{gray!10}{1.935} & \cellcolor{gray!10}{2.054} & \cellcolor{gray!10}{2.364} & \cellcolor{gray!10}{2.412}\\
+\addlinespace
+202506 & Junho/2025 & 2.202 & 1.930 & 2.080 & 2.271 & 2.359\\
+\cellcolor{gray!10}{202507} & \cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{2.337} & \cellcolor{gray!10}{1.928} & \cellcolor{gray!10}{2.061} & \cellcolor{gray!10}{2.292} & \cellcolor{gray!10}{2.424}\\
+202508 & Agosto/2025 & 2.650 & 1.896 & 2.092 & 2.327 & 2.408\\
+\cellcolor{gray!10}{202509} & \cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{2.420} & \cellcolor{gray!10}{1.906} & \cellcolor{gray!10}{2.065} & \cellcolor{gray!10}{2.361} & \cellcolor{gray!10}{2.358}\\
+202510 & Outubro/2025 & 2.597 & 1.937 & 2.083 & 2.345 & 2.320\\
+\addlinespace
+\cellcolor{gray!10}{202511} & \cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{2.493} & \cellcolor{gray!10}{1.908} & \cellcolor{gray!10}{2.181} & \cellcolor{gray!10}{2.324} & \cellcolor{gray!10}{2.354}\\
+202512 & Dezembro/2025 & 2.287 & 1.980 & 2.292 & 2.295 & 2.377\\
+\cellcolor{gray!10}{202601} & \cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{2.550} & \cellcolor{gray!10}{2.031} & \cellcolor{gray!10}{2.220} & \cellcolor{gray!10}{2.281} & \cellcolor{gray!10}{2.371}\\
+\textbf{NA} & \textbf{Acum. 2026 (\%)} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\section{Remuneração por porte da
+empresa}\label{remunerauxe7uxe3o-por-porte-da-empresa}
+
+\begin{ThreePartTable}
+\begin{TableNotes}
+\item Fonte: Novo Caged/MTE. Elaboração: CEPES/IERI/UFU. *Dados com ajustes declarados até janeiro de 2026.
+\end{TableNotes}
+\begin{longtable}[t]{>{\centering\arraybackslash}p{13cm}ccccc}
+\caption{\label{tab:tabela7}Uberlândia/MG: Salário médio real de admissão por porte da empresa, de janeiro/2025 a janeiro/2026 (em R\$), com ajustes*}\\
+\toprule
+competênciamov & data & MEI e Micro & Pequena & Média & Grande\\
+\midrule
+\cellcolor{gray!10}{202501} & \cellcolor{gray!10}{Janeiro/2025} & \cellcolor{gray!10}{2.062} & \cellcolor{gray!10}{2.086} & \cellcolor{gray!10}{2.182} & \cellcolor{gray!10}{2.333}\\
+202502 & Fevereiro/2025 & 2.067 & 2.172 & 2.146 & 2.261\\
+\cellcolor{gray!10}{202503} & \cellcolor{gray!10}{Março/2025} & \cellcolor{gray!10}{1.995} & \cellcolor{gray!10}{2.085} & \cellcolor{gray!10}{2.181} & \cellcolor{gray!10}{2.446}\\
+202504 & Abril/2025 & 2.006 & 2.074 & 2.232 & 2.492\\
+\cellcolor{gray!10}{202505} & \cellcolor{gray!10}{Maio/2025} & \cellcolor{gray!10}{2.025} & \cellcolor{gray!10}{2.146} & \cellcolor{gray!10}{2.219} & \cellcolor{gray!10}{2.565}\\
+\addlinespace
+202506 & Junho/2025 & 2.021 & 2.115 & 2.160 & 2.510\\
+\cellcolor{gray!10}{202507} & \cellcolor{gray!10}{Julho/2025} & \cellcolor{gray!10}{2.015} & \cellcolor{gray!10}{2.103} & \cellcolor{gray!10}{2.180} & \cellcolor{gray!10}{2.635}\\
+202508 & Agosto/2025 & 2.059 & 2.096 & 2.195 & 2.584\\
+\cellcolor{gray!10}{202509} & \cellcolor{gray!10}{Setembro/2025} & \cellcolor{gray!10}{2.040} & \cellcolor{gray!10}{2.128} & \cellcolor{gray!10}{2.207} & \cellcolor{gray!10}{2.498}\\
+202510 & Outubro/2025 & 2.081 & 2.174 & 2.230 & 2.395\\
+\addlinespace
+\cellcolor{gray!10}{202511} & \cellcolor{gray!10}{Novembro/2025} & \cellcolor{gray!10}{2.060} & \cellcolor{gray!10}{2.120} & \cellcolor{gray!10}{2.236} & \cellcolor{gray!10}{2.520}\\
+202512 & Dezembro/2025 & 2.169 & 2.160 & 2.204 & 2.397\\
+\cellcolor{gray!10}{202601} & \cellcolor{gray!10}{Janeiro/2026} & \cellcolor{gray!10}{2.208} & \cellcolor{gray!10}{2.212} & \cellcolor{gray!10}{2.230} & \cellcolor{gray!10}{2.388}\\
+\textbf{NA} & \textbf{Acum. 2026 (\%)} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%} & \textbf{0.00\%}\\
+\bottomrule
+\insertTableNotes
+\end{longtable}
+\end{ThreePartTable}
+\pagebreak
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico6-1} \end{center}
+\pagebreak
+
+\section{Remuneração por faixa
+etária}\label{remunerauxe7uxe3o-por-faixa-etuxe1ria}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico7-1} \end{center}
+\pagebreak
+
+\section{Remuneração por gênero e grau de
+instrução}\label{remunerauxe7uxe3o-por-guxeanero-e-grau-de-instruuxe7uxe3o}
+
+\begin{center}\includegraphics{C:\Users\User\Projetos\novo-caged-dashboard-udi\output\boletim por mes\boletim202601_files/figure-latex/grafico8-1} \end{center}
+\pagebreak
+
+\section{Metodologia}\label{metodologia}
+
+O Boletim Mensal do Emprego de Uberlândia, elaborado pelo Centro de
+Estudos, Pesquisas e Projetos Econômico-Sociais (CEPES) do Instituto de
+Economia e Relações Internacionais (IERI) da Universidade Federal de
+Uberlândia, tem como objetivo publicar mensalmente informações sobre a
+dinâmica do emprego formal neste município.
+
+Os dados apresentados referem-se aos vínculos de emprego celetista,
+extraídos das informações do Novo Caged (Cadastro Geral de Empregados e
+Desempregados), captadas e divulgadas pelo Ministério do Trabalho e
+Emprego (MTE). Neste informativo faz-se a opção por considerar a base
+ajustada, incluindo as declarações entregues fora do prazo, buscando
+retratar com maior fidelidade a realidade do mercado de trabalho formal
+celetista e registrar os saldos de todas as movimentações apresentadas
+pela relação entre admitidos e desligados. No que se refere ao nível de
+escolaridade, foi utilizado o maior grau completo para a análise dos
+dados.
+
+A divisão por porte das empresas segue o critério de quantidade de
+empregados, conforme Quadro 1, uma vez que não é possível, pelos dados
+do Novo CAGED, adotar o critério definidos na Lei Geral das Micro e
+Pequenas Empresas (Lei Federal nº 123 de 2006). Empresas públicas são
+desconsideradas.
+
+\vspace{1cm}
+\begingroup\fontsize{11}{13}\selectfont
+
+\begin{longtabu} to \linewidth {>{\raggedright\arraybackslash}p{6 cm}>{\raggedright\arraybackslash}p{6 cm}>{\raggedright\arraybackslash}p{6 cm}}
+\caption{\label{tab:quadro1_metodologia}Quadro 1 – Critérios para divisão por porte das empresas empregadoras}\\
+\toprule
+Porte & Extrativa mineral; Indústria de Transformação; Construção e SIUP & Agropecuária; Comércio e Serviços\\
+\midrule
+\cellcolor{gray!10}{MEI e Microempresa} & \cellcolor{gray!10}{Até 19 empregados} & \cellcolor{gray!10}{Até 9 empregados}\\
+Pequena Empresa & De 20 a 99 empregados & De 10 a 49 empregados\\
+\cellcolor{gray!10}{Média Empresa} & \cellcolor{gray!10}{De 100 a 499 empregados} & \cellcolor{gray!10}{De 50 a 99 empregados}\\
+Grande Empresa & 500 empregados ou mais & 100 empregados ou mais\\
+\bottomrule
+\end{longtabu}
+\endgroup{}
+\vspace{1cm}
+
+Os resultados referem-se aos dados divulgados pelo MTE para janeiro de
+2026, com ajustes declarados até janeiro de 2026. Assim sendo, conta com
+informações entregues fora do prazo ou corrigidas referentes aos meses
+anteriores a este.
+
+\end{document}
