@@ -77,6 +77,9 @@
 % ---- Página de capa personalizada (DO SEU ORIGINAL) ----
 \makeatletter
 \definecolor{cepesblue}{HTML}{4682B4}
+% Compatibilidade com Pandoc/R Markdown: garante existência de \@subtitle
+\providecommand{\@subtitle}{}
+\providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
 \renewcommand{\maketitle}{
   \thispagestyle{empty}
   \vspace*{2cm}
@@ -85,7 +88,7 @@
     \vspace{1cm}
     {\huge\bfseries\sffamily \@subtitle \par}
     \vspace{2cm}
-    \includegraphics[width=0.4\textwidth]{logos.png}
+    \includegraphics[width=0.4\textwidth]{../../boletim/logos.png}
     \vfill
     {\large \@date \par}
   \end{center}
