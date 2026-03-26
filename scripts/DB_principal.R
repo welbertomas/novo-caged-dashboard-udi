@@ -6,9 +6,15 @@
 rm(list = ls())
 
 # ── Configuração e pacotes ────────────────────────────────
-source("config.R")
+if (file.exists("config.R")) {
+  source("config.R")
+} else if (file.exists(file.path("scripts", "config.R"))) {
+  source(file.path("scripts", "config.R"))
+} else {
+  stop("Arquivo config.R não encontrado.")
+}
 
-pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven")
+pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven", "rmarkdown")
 for (p in pkgs) {
   if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
   library(p, character.only = TRUE)
@@ -52,6 +58,22 @@ source("DB_novoarquivo.R")          # atualiza CAGED_completo.rds
 source("DB_atualizaestoque.R")      # atualiza CAGED_painel.rds + estoqueatualizado.rds
 source("DB_resultados.R")           # Tabelas 1–10  (Uberlândia, série histórica)
 source("DB_resultados_ultimomes.R") # Tabelas 11–14 (todos os municípios, mês atual)
+source("processa_boletim.R")        # objetos do boletim (tabelas + gráficos)
+
+# ── Renderização do boletim ───────────────────────────────
+boletim_dir <- file.path(DIR_OUTPUT, "boletim por mes")
+if (!dir.exists(boletim_dir)) dir.create(boletim_dir, recursive = TRUE)
+
+arquivo_rmd <- file.path(boletim_dir, "boletim.Rmd")
+arquivo_pdf <- paste0("boletim", MES_ATUAL, ".pdf")
+
+rmarkdown::render(
+  input = arquivo_rmd,
+  output_file = arquivo_pdf,
+  output_dir = boletim_dir,
+  envir = globalenv(),
+  quiet = TRUE
+)
 
 # ── Limpeza ───────────────────────────────────────────────
 unlink(DIR_TEMP, recursive = TRUE)
@@ -59,5 +81,5 @@ unlink(DIR_TEMP, recursive = TRUE)
 cat("\n==============================================\n")
 cat("Processamento concluído com sucesso!\n")
 cat(sprintf("Planilha gerada: %s\n", ARQUIVO_TABELAS))
+cat(sprintf("Boletim gerado : %s\n", file.path(boletim_dir, arquivo_pdf)))
 cat("==============================================\n")
-
