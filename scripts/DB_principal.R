@@ -66,7 +66,7 @@ source("DB_resultados_ultimomes.R") # Tabelas 11–14 (todos os municípios, mê
 source("processa_boletim.R")        # objetos do boletim (tabelas + gráficos)
 
 # ── Renderização do boletim ───────────────────────────────
-boletim_dir <- file.path(DIR_OUTPUT, "boletim por mes")
+boletim_dir <- file.path(DIR_OUTPUT, "boletim_por_mes")
 if (!dir.exists(boletim_dir)) dir.create(boletim_dir, recursive = TRUE)
 
 arquivo_rmd <- file.path(boletim_dir, "boletim.Rmd")

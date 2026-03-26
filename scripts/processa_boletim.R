@@ -563,6 +563,8 @@ tabela5 <- df_remuneracao_geral |>
   mutate(`Salário de Admissão` = fmt_num(round(`Salário de Admissão`)),
          `Salário de Demissão` = fmt_num(round(`Salário de Demissão`)),
          var_adm = fmt_pct(var_adm), var_dem = fmt_pct(var_dem)) |>
+  mutate(var_adm = if_else(var_adm == "NA%", "", var_adm),
+         var_dem = if_else(var_dem == "NA%", "", var_dem)) |>
   (\(d) {
     jan_val <- df_remuneracao_geral |> filter(competênciamov == ano_ref*100+1)
     dez_val <- df_remuneracao_geral |> filter(competênciamov == global_periodo_referencia)
@@ -570,8 +572,16 @@ tabela5 <- df_remuneracao_geral |>
             var_adm = fmt_pct((dez_val$remuneracao_udi_adm/jan_val$remuneracao_udi_adm - 1)*100),
             `Salário de Demissão` = "",
             var_dem = fmt_pct((dez_val$remuneracao_udi_dem/jan_val$remuneracao_udi_dem - 1)*100))
-  })()
+  })() |>
+  rename(`Variação Adm. (%)` = var_adm,
+         `Variação Dem. (%)` = var_dem)
 
-# Tabelas 6 e 7 — já tratadas pela função remuneracao_wide()
-tabela6 <- df_tabela6
-tabela7 <- df_tabela7
+# Tabelas 6 e 7 
+tabela6 <- df_tabela6 |>
+  select(-competênciamov) |>
+  rename(`Ano / Mês` = data)
+
+
+tabela7 <- df_tabela7 |>
+  select(-competênciamov) |>
+  rename(`Ano / Mês` = data)

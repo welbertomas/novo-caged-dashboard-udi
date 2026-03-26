@@ -104,18 +104,14 @@ kable(tabela2,
 
 # Saldo por porte da empresa
 ```{r tabela3, echo=FALSE}
-# Criar tabela3 a partir do df_saldo_porte já gerado pelo script principal
-tabela3_data <- df_saldo_porte %>%
-  mutate(across(c(`MEI e Micro`, Pequena, Média, Grande, `Administração Pública`),
-                ~scales::comma(., big.mark = ".", decimal.mark = ",")))
 
 # Renderizar a tabela
-kable(tabela3_data,
+kable(tabela3,
       caption = caption_tabela3,
-      align = c('c', rep('c', ncol(tabela3_data) - 1))) %>%
+      align = c('c', rep('c', ncol(tabela3) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
   column_spec(1, width = "10cm") %>%  
-  row_spec(nrow(tabela3_data), bold = TRUE) %>%
+  row_spec(nrow(tabela3), bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
       general_title = "",
@@ -161,7 +157,7 @@ kable(tabela4a,
     )
 ```
 \pagebreak
-
+\addtocounter{table}{-1}
 ```{r tabela4b, echo=FALSE}
 
 kable(tabela4b,
@@ -177,7 +173,7 @@ kable(tabela4b,
     )
 ```
 \pagebreak
-
+\addtocounter{table}{-1}
 ```{r tabela4c, echo=FALSE}
 
 kable(tabela4c,
@@ -207,7 +203,7 @@ kable(tabela5,
       caption = caption_tabela5,
       align = c('c', 'c', 'c', 'c', 'c')) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
-  column_spec(1, width = "5cm") %>%    # ✅ expande a coluna de texto
+  column_spec(1, width = "5cm") %>%    
   row_spec(nrow(tabela5), bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
@@ -224,7 +220,7 @@ kable(tabela6,
       caption = caption_tabela6,
       align = c('c', rep('c', ncol(tabela6) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
-  column_spec(1, width = "10cm") %>%    # ✅ expande a coluna de texto
+  column_spec(1, width = "10cm") %>%  
   row_spec(nrow(tabela6), bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
@@ -242,7 +238,7 @@ kable(tabela7,
       caption = caption_tabela7,
       align = c('c', rep('c', ncol(tabela7) - 1))) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
-  column_spec(1, width = "13cm") %>%    # ✅ expande a coluna de texto
+  column_spec(1, width = "13cm") %>%  
   row_spec(nrow(tabela7), bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
@@ -296,7 +292,7 @@ A divisão por porte das empresas segue o critério de quantidade de empregados,
 ```{r quadro1_metodologia, echo=FALSE}
 
 kable(df_metodologia_porte,
-      caption = "Quadro 1 – Critérios para divisão por porte das empresas empregadoras",
+      caption = "Critérios para divisão por porte das empresas empregadoras",
       align = c('l', 'l', 'l')) %>%
   kable_styling(
     latex_options = c("striped", "hold_position"),
