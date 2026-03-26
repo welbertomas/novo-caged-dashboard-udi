@@ -32,3 +32,55 @@ Para reproduzir a planilha final:
 3. O arquivo final será gerado em `output/DB_trabalho.xlsx`.
 
 > Observação: para primeira carga histórica, execute antes `scripts/DB_extracao.R` e `scripts/DB_extraisaldo.R`.
+
+## Exemplo prático: gerar `DB_trabalho` e `boletim202602.pdf` quando sair 202602
+
+Quando os microdados de **fevereiro/2026 (`202602`)** forem publicados no FTP do MTE:
+
+1. Abra `scripts/config.R` e altere:
+
+```r
+MES_ATUAL <- "202602"
+```
+
+2. (Recomendado) confirme se o vetor `SM` tem o ano de referência necessário.
+3. Execute o pipeline mensal a partir da pasta `scripts`:
+
+```r
+source("DB_principal.R")
+```
+
+4. Confira os arquivos gerados:
+   - `output/DB_trabalho.xlsx`
+   - `output/boletim_por_mes/boletim202602.pdf`
+
+> Dica: se for necessário reprocessar o mesmo mês, basta manter `MES_ATUAL <- "202602"` e executar de novo; o pipeline remove o mês antes de anexar para evitar duplicidade.
+
+## Erros comuns na atualização mensal (e como prevenir)
+
+- **`MES_ATUAL` inválido** (fora de `AAAAMM` ou mês fora de `01..12`): o `DB_principal.R` agora valida isso no início e interrompe com mensagem objetiva.
+  - Exemplo válido: `202601`.
+- **Ano novo sem salário mínimo em `config.R`**: se o ano não existir no vetor `SM`, o pipeline usa o último ano disponível e emite `warning`.
+  - Recomendação: atualizar `SM` no começo de cada ano para evitar aproximações.
+- **Falha de FTP/download** (instabilidade de rede ou indisponibilidade no MTE): o pipeline falha rápido por arquivo, evitando atualização parcial silenciosa.
+  - Recomendação: reexecutar o pipeline e, se persistir, testar conectividade ao FTP institucional.
+- **Reprocessamento do mesmo mês**: os scripts removem o mês atual do histórico/painel antes de anexar novamente, reduzindo risco de duplicidade.
+
+## Como excluir `_temp_ftp` após o processamento
+
+O fluxo principal (`scripts/DB_principal.R`) já remove `_temp_ftp` automaticamente ao final (inclusive quando ocorre erro), via `on.exit`.
+
+Se você quiser limpar manualmente:
+
+1. **No R (recomendado):**
+
+```r
+source("scripts/DB_ftp_utils.R")
+limpar_temp_ftp("_temp_ftp")
+```
+
+2. **No terminal (Linux/macOS):**
+
+```bash
+rm -rf _temp_ftp
+```

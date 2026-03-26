@@ -96,6 +96,12 @@
 
 # ── Pública ───────────────────────────────────────────────
 
+limpar_temp_ftp <- function(dir_temp = DIR_TEMP) {
+  if (!dir.exists(dir_temp)) return(invisible(FALSE))
+  unlink(dir_temp, recursive = TRUE, force = TRUE)
+  invisible(TRUE)
+}
+
 #' Baixa CAGEDEXC, CAGEDFOR e CAGEDMOV de um mês e retorna
 #' uma lista nomeada com os três data.tables completos
 #' (sem filtro de município — cada script filtra o que precisa).
