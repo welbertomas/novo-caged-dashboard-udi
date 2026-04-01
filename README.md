@@ -32,3 +32,13 @@ Para reproduzir a planilha final:
 3. O arquivo final será gerado em `output/DB_trabalho.xlsx`.
 
 > Observação: para primeira carga histórica, execute antes `scripts/DB_extracao.R` e `scripts/DB_extraisaldo.R`.
+
+## Erros comuns na atualização mensal (e como prevenir)
+
+- **`MES_ATUAL` inválido** (fora de `AAAAMM` ou mês fora de `01..12`): o `DB_principal.R` agora valida isso no início e interrompe com mensagem objetiva.
+  - Exemplo válido: `202601`.
+- **Ano novo sem salário mínimo em `config.R`**: se o ano não existir no vetor `SM`, o pipeline usa o último ano disponível e emite `warning`.
+  - Recomendação: atualizar `SM` no começo de cada ano para evitar aproximações.
+- **Falha de FTP/download** (instabilidade de rede ou indisponibilidade no MTE): o pipeline falha rápido por arquivo, evitando atualização parcial silenciosa.
+  - Recomendação: reexecutar o pipeline e, se persistir, testar conectividade ao FTP institucional.
+- **Reprocessamento do mesmo mês**: os scripts removem o mês atual do histórico/painel antes de anexar novamente, reduzindo risco de duplicidade.

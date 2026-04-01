@@ -24,6 +24,14 @@ setwd(DIR_SCRIPT)
 if (!dir.exists(DIR_OUTPUT)) dir.create(DIR_OUTPUT, recursive = TRUE)
 
 # ── Parâmetros derivados (não editar) ─────────────────────
+if (!grepl("^[0-9]{6}$", MES_ATUAL)) {
+  stop("MES_ATUAL inválido. Use formato AAAAMM (ex.: 202601).")
+}
+mes_num_validacao <- as.integer(substr(MES_ATUAL, 5, 6))
+if (is.na(mes_num_validacao) || mes_num_validacao < 1L || mes_num_validacao > 12L) {
+  stop("MES_ATUAL inválido. O mês deve estar entre 01 e 12.")
+}
+
 ANO_ATUAL  <- substr(MES_ATUAL, 1, 4)
 MES_NUMERO <- substr(MES_ATUAL, 5, 6)
 
@@ -32,7 +40,7 @@ if (!dir.exists(DIR_TEMP)) dir.create(DIR_TEMP, recursive = TRUE)
 
 # Sempre remove _temp_ftp ao final (inclusive em caso de erro)
 on.exit({
-  if (dir.exists(DIR_TEMP)) unlink(DIR_TEMP, recursive = TRUE, force = TRUE)
+  limpar_temp_ftp(DIR_TEMP)
 }, add = TRUE)
 
 BASE_URL_FTP <- "ftp://ftp.mtps.gov.br/pdet/microdados/NOVO%20CAGED"
