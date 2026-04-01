@@ -14,7 +14,7 @@ if (file.exists("config.R")) {
   stop("Arquivo config.R não encontrado.")
 }
 
-pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven", "rmarkdown")
+pkgs <- c("data.table", "archive", "curl", "readxl", "openxlsx", "haven", "rmarkdown", "httr")
 for (p in pkgs) {
   if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
   library(p, character.only = TRUE)
@@ -59,6 +59,7 @@ cat(sprintf(
 ))
 
 # ── Pipeline ──────────────────────────────────────────────
+source("atualiza_ipc_cepes.R")      # atualiza o arquivo de IPC 
 source("DB_novoarquivo.R")          # atualiza CAGED_completo.rds
 source("DB_atualizaestoque.R")      # atualiza CAGED_painel.rds + estoqueatualizado.rds
 source("DB_resultados.R")           # Tabelas 1–10  (Uberlândia, série histórica)
@@ -94,6 +95,7 @@ artefatos_boletim <- c(
   paste0(base_boletim, "_files")
 )
 unlink(artefatos_boletim[file.exists(artefatos_boletim)], recursive = TRUE, force = TRUE)
+unlink(DIR_TEMP[file.exists(DIR_TEMP)], recursive = TRUE, force = TRUE)
 
 cat("\n==============================================\n")
 cat("Processamento concluído com sucesso!\n")
