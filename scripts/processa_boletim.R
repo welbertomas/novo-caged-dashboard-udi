@@ -1,4 +1,4 @@
-# Gera tabelas e gráficos para boletim — versão simplificada
+# Gera tabelas e gráficos para boletim
 
 # ── Pacotes ──────────────────────────────────────────────────────────────────
 if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
