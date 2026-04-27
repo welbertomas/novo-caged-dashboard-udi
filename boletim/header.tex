@@ -47,13 +47,13 @@
   font={small},
   justification=centering,
   singlelinecheck=false,
-  skip=6pt
+  skip=8pt
 }
 
 % ---- ESPAÇAMENTO VERTICAL DAS LINHAS----
 \renewcommand{\arraystretch}{1.7}
 
-% ---- LONGTABLE SPACING (DO SEU ORIGINAL) ----
+% ---- LONGTABLE SPACING ----
 \setlength{\LTpre}{0pt}
 \setlength{\LTpost}{0pt}
 
@@ -74,25 +74,20 @@
 % ------------------------------------------------
 \usepackage{microtype}
 
-% ---- Página de capa personalizada (DO SEU ORIGINAL) ----
+% ---- Página de capa personalizada ----
 \makeatletter
 \definecolor{cepesblue}{HTML}{4682B4}
-% Compatibilidade com Pandoc/R Markdown: garante existência de \@subtitle
 \providecommand{\@subtitle}{}
 \providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
 \renewcommand{\maketitle}{
+  % --- Capa: imagem PNG em página inteira ---
   \thispagestyle{empty}
-  \vspace*{2cm}
   \begin{center}
-    {\Huge\bfseries\sffamily\color{cepesblue} \@title \par}
-    \vspace{1cm}
-    {\huge\bfseries\sffamily \@subtitle \par}
-    \vspace{2cm}
-    \includegraphics[width=0.4\textwidth]{../../boletim/logos.png}
-    \vfill
-    {\large \@date \par}
+    \includegraphics[width=\paperwidth,height=\paperheight]{../../boletim/capa_jan26.png}
   \end{center}
   \clearpage
+  % --- Expediente: PDF inserido logo após ---
+  \includepdf[pages=-]{../../boletim/expediente.pdf}
 }
 \makeatother
 

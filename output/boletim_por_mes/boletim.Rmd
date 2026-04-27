@@ -150,6 +150,8 @@ kable(tabela4a,
   kable_styling(latex_options = c("striped", "hold_position")) %>%  
   column_spec(1, width = "14cm") %>%  
   row_spec(which(tabela4a$Variáveis == "Total mês de referência"), bold = TRUE) %>%
+  row_spec(1, bold = TRUE) %>%
+  row_spec(8, bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
       general_title = "Continua",
@@ -166,6 +168,8 @@ kable(tabela4b,
   kable_styling(latex_options = c("striped", "hold_position")) %>%  
   column_spec(1, width = "14cm") %>%  
   row_spec(which(tabela4b$Variáveis == "Total mês de referência"), bold = TRUE) %>%
+  row_spec(1, bold = TRUE) %>%
+  row_spec(10, bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
       general_title = "Continua",
@@ -182,6 +186,7 @@ kable(tabela4c,
   kable_styling(latex_options = c("striped", "hold_position")) %>%  
   column_spec(1, width = "14cm") %>%  
   row_spec(which(tabela4c$Variáveis == "Total mês de referência"), bold = TRUE) %>%
+  row_spec(1, bold = TRUE) %>%
     footnote(
       general = fonte_tabela,
       general_title = "",
