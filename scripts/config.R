@@ -3,7 +3,7 @@
 # ============================================================
 
 # ── Competência a processar (formato AAAAMM) ──────────────
-MES_ATUAL <- "202602"
+MES_ATUAL <- "202603"
 
 #MESES_BOLETIM <- c("202601", "202602")
 

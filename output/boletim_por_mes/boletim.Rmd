@@ -139,7 +139,7 @@ print(grafico3)
 \pagebreak
 
 # Saldo por gênero e grau de instrução
-```{r grafico4, echo=FALSE, fig.height=4}
+```{r grafico4, echo=FALSE, fig.height=6}
 #Gráfico 4 já foi gerado no script
 print(grafico4)
 ```
