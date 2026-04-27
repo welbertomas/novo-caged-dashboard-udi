@@ -21,17 +21,17 @@ cat(sprintf("  Histórico carregado: %d obs.\n", nrow(caged_hist)))
 # ── Backup de segurança ────────────────────────────────────
 saveRDS(caged_hist, ARQUIVO_BACKUP)
 
-# ── Remover mês atual caso já exista ──────────────────────
+# ── Remover mês atual e meses futuros caso já existam ────────────────────────
 mes_int <- as.integer(MES_ATUAL)
 n_antes <- nrow(caged_hist)
 for (col in intersect(c("competênciamov","competênciadec","competênciaexc"),
                       names(caged_hist))) {
-  caged_hist <- caged_hist[get(col) != mes_int | is.na(get(col))]
+  caged_hist <- caged_hist[get(col) < mes_int | is.na(get(col))]
 }
 removidas <- n_antes - nrow(caged_hist)
 if (removidas > 0) {
   warning(sprintf(
-    "%d obs. do mês %s já existiam e foram removidas antes do novo import.",
+    "%d obs. do mês %s em diante já existiam e foram removidas antes do novo import.",
     removidas, MES_ATUAL
   ))
 }
