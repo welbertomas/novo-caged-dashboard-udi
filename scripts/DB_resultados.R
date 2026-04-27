@@ -75,7 +75,7 @@ if (n_sem_def > 0)
   message(sprintf("ATENÇÃO: %d obs. sem deflator IPC.", n_sem_def))
 
 dt <- criar_variaveis(dt, modo = "historico")
-dt <- dt[competênciamov >= 202301]
+dt <- dt[competênciamov >= 202301 & competênciamov <= as.integer(MES_ATUAL)]
 cat(sprintf("  Série Uberlândia: %d obs.", nrow(dt)))
 
 estoque_dt <- readRDS(file.path(DIR_DATA, "estoqueatualizado.rds"))

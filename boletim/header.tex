@@ -1,5 +1,5 @@
 % ------------------------------------------------
-% FONTES (necessário para XeLaTeX)
+% FONTES (necessario para XeLaTeX)
 % ------------------------------------------------
 \usepackage{fontspec}
 
@@ -10,7 +10,7 @@
 \usepackage{float}
 
 % ------------------------------------------------
-% TABELAS (necessário para kableExtra)
+% TABELAS (necessario para kableExtra)
 % ------------------------------------------------
 \usepackage{booktabs}
 \usepackage{longtable}
@@ -24,7 +24,7 @@
 \usepackage{tabularx}
 
 % ------------------------------------------------
-% ALINHAMENTO NUMÉRICO
+% ALINHAMENTO NUMERICO
 % ------------------------------------------------
 \usepackage{siunitx}
 \sisetup{
@@ -38,7 +38,7 @@
 \usepackage{xcolor}
 
 % ------------------------------------------------
-% CAPTIONS (títulos das tabelas em NEGRITO)
+% CAPTIONS (titulos das tabelas em NEGRITO)
 % ------------------------------------------------
 \usepackage{caption}
 \captionsetup{
@@ -50,7 +50,7 @@
   skip=8pt
 }
 
-% ---- ESPAÇAMENTO VERTICAL DAS LINHAS----
+% ---- ESPACAMENTO VERTICAL DAS LINHAS ----
 \renewcommand{\arraystretch}{1.7}
 
 % ---- LONGTABLE SPACING ----
@@ -74,20 +74,14 @@
 % ------------------------------------------------
 \usepackage{microtype}
 
-% ---- Página de capa personalizada ----
+% ---- Pagina de capa personalizada ----
 \makeatletter
 \definecolor{cepesblue}{HTML}{4682B4}
 \providecommand{\@subtitle}{}
 \providecommand{\subtitle}[1]{\gdef\@subtitle{#1}}
+\providecommand{\capaboletim}{../../boletim/capa_fev26.pdf}
 \renewcommand{\maketitle}{
-  % --- Capa: imagem PNG em página inteira ---
-  \thispagestyle{empty}
-  \begin{center}
-    \includegraphics[width=\paperwidth,height=\paperheight]{../../boletim/capa_jan26.png}
-  \end{center}
-  \clearpage
-  % --- Expediente: PDF inserido logo após ---
-  \includepdf[pages=-]{../../boletim/expediente.pdf}
+  \includepdf[pages=-]{\capaboletim}
 }
 \makeatother
 

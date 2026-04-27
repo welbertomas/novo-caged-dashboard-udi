@@ -2,6 +2,8 @@
 title: "Boletim Mensal do Mercado de Trabalho"
 subtitle: "`r {m <- c('Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'); if (exists('MES_ATUAL')) paste0('Uberlândia/MG - ', m[as.integer(substr(MES_ATUAL,5,6))], ' ', substr(MES_ATUAL,1,4)) else 'Uberlândia/MG'}`"
 date: "`r format(Sys.Date(), '%d/%m/%Y')`"
+header-includes:
+  - "`r if (exists('CAPA_BOLETIM_LATEX')) paste0('\\\\renewcommand{\\\\capaboletim}{', CAPA_BOLETIM_LATEX, '}') else '\\\\renewcommand{\\\\capaboletim}{../../boletim/capa_jan26.pdf}'`"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -25,8 +27,10 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   fig.align = 'center',
-  fig.pos = 'H'
+  fig.pos = 'H',
+  fig.path = paste0("boletim", if (exists("MES_ATUAL")) MES_ATUAL else "", "_files/figure-latex/")
 )
+knitr::opts_knit$set(root.dir = getwd())
 
 # Carregar objetos processados caso ainda não estejam no ambiente
 if (!exists("df_geral_saldo")) {
@@ -135,8 +139,7 @@ print(grafico3)
 \pagebreak
 
 # Saldo por gênero e grau de instrução
-\vspace{-0.5cm}
-```{r grafico4, echo=FALSE}
+```{r grafico4, echo=FALSE, fig.height=4}
 #Gráfico 4 já foi gerado no script
 print(grafico4)
 ```

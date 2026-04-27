@@ -1,9 +1,42 @@
 # Gera tabelas e gráficos para boletim
 
 # ── Pacotes ──────────────────────────────────────────────────────────────────
-if (!requireNamespace("pacman", quietly = TRUE)) install.packages("pacman")
-pacman::p_load(tidyverse, readxl, haven, knitr, rmarkdown, here,
-               lubridate, scales, kableExtra, forcats, data.table)
+if (!exists("configurar_biblioteca_r", mode = "function") ||
+    !exists("garantir_pacotes", mode = "function")) {
+  candidatos_bootstrap <- c(
+    "DB_bootstrap.R",
+    file.path("scripts", "DB_bootstrap.R"),
+    file.path("..", "..", "scripts", "DB_bootstrap.R")
+  )
+  bootstrap_path <- candidatos_bootstrap[file.exists(candidatos_bootstrap)][1]
+  if (is.na(bootstrap_path)) {
+    stop("Arquivo DB_bootstrap.R nÃ£o encontrado para carregar o boletim.")
+  }
+  source(bootstrap_path)
+}
+
+if (!exists("DIR_RAIZ")) {
+  candidatos_config <- c(
+    "config.R",
+    file.path("scripts", "config.R"),
+    file.path("..", "..", "scripts", "config.R")
+  )
+  config_path <- candidatos_config[file.exists(candidatos_config)][1]
+  if (is.na(config_path)) {
+    stop("Arquivo config.R nÃ£o encontrado para carregar o boletim.")
+  }
+  source(config_path)
+}
+
+configurar_biblioteca_r(DIR_RAIZ)
+
+pkgs_boletim <- c(
+  "dplyr", "ggplot2", "tidyr", "readxl", "haven", "knitr",
+  "rmarkdown", "here", "lubridate", "scales", "kableExtra",
+  "forcats", "data.table", "tibble"
+)
+garantir_pacotes(pkgs_boletim)
+invisible(lapply(pkgs_boletim, library, character.only = TRUE))
 
 # ── Configurações gerais ──────────────────────────────────────────────────────
 Sys.setlocale("LC_ALL", if (.Platform$OS.type == "windows") "Portuguese_Brazil.UTF-8" else "pt_BR.UTF-8")
@@ -153,7 +186,8 @@ cat(sprintf("  IPC: %d períodos (último: %d)\n", nrow(ipc), max(ipc$competênc
 # ── Processamento principal ───────────────────────────────────────────────────
 df_processed <- df_caged |>
   inner_join(ipc, by = "competênciamov") |>
-  filter(competênciamov >= periodo_12meses) |>
+  filter(competênciamov >= periodo_12meses,
+         competênciamov <= global_periodo_referencia) |>
   mutate(
     # Admissões / demissões
     admissoes = if_else(saldomovimentação == 1,  saldomovimentação, 0L),
@@ -449,7 +483,9 @@ grafico4 <- ggplot(df_g4, aes(x = fct_rev(gdi_leg), y = saldomovimentação, fil
   labs(title = paste0("Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
-  theme(strip.text = element_text(size=10, face="bold"),
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0.5,
+                                  lineheight = 1.1, margin = margin(t = 20, b = 10, unit = "pt")),
+        strip.text = element_text(size=10, face="bold"),
         strip.background = element_rect(fill="gray95"),
         panel.grid.major.y = element_blank())
 
@@ -585,3 +621,31 @@ tabela6 <- df_tabela6 |>
 tabela7 <- df_tabela7 |>
   select(-competênciamov) |>
   rename(`Ano / Mês` = data)
+if (!exists("configurar_biblioteca_r", mode = "function") ||
+    !exists("garantir_pacotes", mode = "function")) {
+  candidatos_bootstrap <- c(
+    "DB_bootstrap.R",
+    file.path("scripts", "DB_bootstrap.R"),
+    file.path("..", "..", "scripts", "DB_bootstrap.R")
+  )
+  bootstrap_path <- candidatos_bootstrap[file.exists(candidatos_bootstrap)][1]
+  if (is.na(bootstrap_path)) {
+    stop("Arquivo DB_bootstrap.R nÃ£o encontrado para carregar o boletim.")
+  }
+  source(bootstrap_path)
+}
+
+if (!exists("DIR_RAIZ")) {
+  candidatos_config <- c(
+    "config.R",
+    file.path("scripts", "config.R"),
+    file.path("..", "..", "scripts", "config.R")
+  )
+  config_path <- candidatos_config[file.exists(candidatos_config)][1]
+  if (is.na(config_path)) {
+    stop("Arquivo config.R nÃ£o encontrado para carregar o boletim.")
+  }
+  source(config_path)
+}
+
+configurar_biblioteca_r(DIR_RAIZ)
