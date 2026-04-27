@@ -3,7 +3,9 @@
 # Nunca precisa ser editado. Altere apenas config.R.
 # ============================================================
 
-rm(list = ls())
+
+# EXEMPLO PARA A LIDE
+
 
 if (file.exists("DB_bootstrap.R")) {
   source("DB_bootstrap.R")
