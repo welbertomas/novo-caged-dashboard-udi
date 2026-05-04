@@ -4,7 +4,7 @@
 # ============================================================
 
 
-# EXEMPLO PARA A LIDE
+rm(list=ls())
 
 
 if (file.exists("DB_bootstrap.R")) {

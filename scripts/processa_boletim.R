@@ -422,10 +422,11 @@ df_g8 <- df_base_mes |>
 # ── Temas e paletas de cores ──────────────────────────────────────────────────
 bar_colors_saldo <- c("TRUE" = "steelblue", "FALSE" = "darkred")
 
-tema_base <- theme_minimal() %+replace% theme(
-  plot.title   = element_text(size = 12, face = "bold", hjust = 0.5,
+tema_base <- theme_minimal(base_family = "Arial") %+replace% theme(
+  text         = element_text(family = "Arial"),
+  plot.title   = element_text(family = "Arial", size = 12, face = "bold", hjust = 0.5,
                               lineheight = 1.2, margin = margin(t=15, b=10, unit="pt")),
-  plot.caption = element_text(size = 9, hjust = 0, margin = margin(t=25, unit="pt")),
+  plot.caption = element_text(family = "Arial", size = 9, hjust = 0, margin = margin(t=25, unit="pt")),
   plot.title.position = "plot"
 )
 
@@ -436,13 +437,14 @@ grafico1 <- ggplot(df_geral_saldo, aes(x = data, y = saldo_mes, fill = saldo_mes
   geom_col(width = 0.7) +
   scale_fill_manual(values = bar_colors_saldo, guide = "none") +
   geom_text(aes(label = fmt_num(saldo_mes)),
-            vjust = ifelse(df_geral_saldo$saldo_mes > 0, -0.5, 1.2), size = 3.5) +
+            vjust = ifelse(df_geral_saldo$saldo_mes > 0, -0.5, 1.2), size = 3.5,
+            family = "Arial") +
   scale_y_continuous(labels = fmt_num, limits = c(-3500, 2000),
                      breaks = seq(-3500, 2000, 1000)) +
   labs(title = paste0("Gráfico 1 – Uberlândia/MG: Saldo do emprego formal,\n", periodo_label_12m, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
+  theme(axis.text.x = element_text(family = "Arial", angle = 90, hjust = 1, vjust = 0.5, size = 9),
         panel.grid.major.x = element_blank())
 
 # Gráfico 2 — Saldo por setor e porte (barras horizontais facetadas)
@@ -450,13 +452,14 @@ grafico2 <- ggplot(df_g2, aes(x = fct_rev(tamanho), y = saldomovimentação, fil
   geom_col() +
   scale_fill_manual(values = bar_colors_saldo, guide = "none") +
   geom_text(aes(label = fmt_num(saldomovimentação)),
-            hjust = ifelse(df_g2$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
+            hjust = ifelse(df_g2$saldomovimentação > 0, -0.2, 1.2), size = 3.5,
+            family = "Arial") +
   facet_wrap(~setores, scales = "free_y", ncol = 1, strip.position = "left") +
   coord_flip() +
   labs(title = paste0("Gráfico 2 – Uberlândia/MG: Saldo por setor de atividade e porte da empresa\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
-  theme(strip.text = element_text(size = 10, face = "bold"),
+  theme(strip.text = element_text(family = "Arial", size = 10, face = "bold"),
         strip.background = element_rect(fill = "gray95"),
         panel.grid.major.y = element_blank())
 
@@ -465,7 +468,8 @@ grafico3 <- ggplot(df_g3, aes(x = fct_rev(faixa_etaria), y = saldomovimentação
   geom_col() +
   scale_fill_manual(values = bar_colors_saldo, guide = "none") +
   geom_text(aes(label = fmt_num(saldomovimentação)),
-            hjust = ifelse(df_g3$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
+            hjust = ifelse(df_g3$saldomovimentação > 0, -0.2, 1.2), size = 3.5,
+            family = "Arial") +
   coord_flip() +
   labs(title = paste0("Gráfico 3 – Uberlândia/MG: Saldo por faixa etária do empregado\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
@@ -476,27 +480,29 @@ grafico4 <- ggplot(df_g4, aes(x = fct_rev(gdi_leg), y = saldomovimentação, fil
   geom_col(position = position_dodge(0.9)) +
   scale_fill_manual(values = bar_colors_saldo, guide = "none") +
   geom_text(aes(label = fmt_num(saldomovimentação)),
-            hjust = ifelse(df_g4$saldomovimentação > 0, -0.2, 1.2), size = 3.5) +
+            hjust = ifelse(df_g4$saldomovimentação > 0, -0.2, 1.2), size = 3.5,
+            family = "Arial") +
   facet_wrap(~genero, scales = "free_y") +
   coord_flip() +
-  scale_y_continuous(limits = c(-550, 600), breaks = seq(-550, 600, 200)) +
+  scale_y_continuous(limits = c(-550, 800), breaks = seq(-550, 1000, 200)) +
   labs(title = paste0("Gráfico 4 – Uberlândia/MG: Saldo por gênero e grau de instrução do empregado\nem ", periodo_label_mes, ", com ajustes*"),
        x = NULL, y = "Saldo", caption = fonte_grafico) +
   tema_base +
-  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0.5,
+  theme(plot.title = element_text(family = "Arial", size = 11, face = "bold", hjust = 0.5,
                                   lineheight = 1.1, margin = margin(t = 20, b = 10, unit = "pt")),
-        strip.text = element_text(size=10, face="bold"),
+        strip.text = element_text(family = "Arial", size=10, face="bold"),
         strip.background = element_rect(fill="gray95"),
         panel.grid.major.y = element_blank())
 
 # Gráfico 5 — Salário médio real de admissão ao longo do tempo
 grafico5 <- ggplot(df_remuneracao_geral, aes(x = data, y = remuneracao_udi_adm)) +
   geom_col(fill = "steelblue", width = 0.7) +
-  geom_text(aes(label = fmt_num(round(remuneracao_udi_adm))), vjust = -0.5, size = 3) +
+  geom_text(aes(label = fmt_num(round(remuneracao_udi_adm))), vjust = -0.5, size = 3,
+            family = "Arial") +
   labs(title = paste0("Gráfico 5 – Uberlândia/MG: Salário médio real de admissão\n", periodo_label_12m, " (em R$), com ajustes*"),
        x = NULL, y = "Salário de admissão", caption = fonte_grafico) +
   tema_base +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 9),
+  theme(axis.text.x = element_text(family = "Arial", angle = 90, hjust = 1, vjust = 0.5, size = 9),
         axis.text.y = element_blank(), panel.grid.major.x = element_blank())
 
 # Gráficos 6-8 — padrão similar (salário por categoria)
@@ -505,7 +511,7 @@ make_grafico_salario <- function(df, x_var, fill_var = NULL,
   p <- ggplot(df, aes(x = fct_rev(!!sym(x_var)), y = remuneracao_udi_adm)) +
     geom_col(fill = "steelblue") +
     geom_text(aes(label = fmt_num(round(remuneracao_udi_adm))),
-              hjust = -0.2, size = 3.5) +
+              hjust = -0.2, size = 3.5, family = "Arial") +
     coord_flip() +
     scale_y_continuous(limits = x_lim, labels = NULL) +
     labs(title = title, x = NULL, y = NULL, caption = fonte_grafico) +
@@ -514,7 +520,7 @@ make_grafico_salario <- function(df, x_var, fill_var = NULL,
           panel.grid.major.y = element_blank())
   if (!is.null(fill_var))
     p <- p + facet_wrap(as.formula(paste("~", fill_var)), scales = "free_y") +
-      theme(strip.text = element_text(size=10, face="bold"),
+      theme(strip.text = element_text(family = "Arial", size=10, face="bold"),
             strip.background = element_rect(fill="gray95"))
   p
 }
