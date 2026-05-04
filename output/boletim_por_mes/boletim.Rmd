@@ -28,6 +28,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   fig.align = 'center',
   fig.pos = 'H',
+  dev = 'cairo_pdf',
   fig.path = paste0("boletim", if (exists("MES_ATUAL")) MES_ATUAL else "", "_files/figure-latex/")
 )
 knitr::opts_knit$set(root.dir = getwd())
